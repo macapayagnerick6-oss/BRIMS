@@ -1,4 +1,4 @@
-# Barangay Resident Information Management System (BRIMMS)
+# Barangay Resident Information Management System (BRIMS)
 
 A web application for managing barangay resident information, built with **HTML5**, **CSS (SCSS)**, and **Angular 18**.
 
