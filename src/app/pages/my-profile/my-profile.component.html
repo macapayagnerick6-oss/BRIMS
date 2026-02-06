@@ -1,0 +1,50 @@
+<div class="my-profile" *ngIf="resident">
+  <h1 class="page-title">My Profile</h1>
+  <div class="profile-card card">
+    <div class="profile-top">
+      <div class="avatar-lg"></div>
+      <div class="profile-info">
+        <p class="resident-id">Resident ID: {{ resident.residentId }}</p>
+        <div class="qr-code-section">
+          <button type="button" class="btn btn--sm btn--outline" (click)="toggleQRCode()">
+            {{ showQRCode ? 'Hide' : 'Show' }} QR Code
+          </button>
+          <div class="qr-code-display" *ngIf="showQRCode && qrCodeDataUrl">
+            <img [src]="qrCodeDataUrl" alt="My Resident QR Code" class="qr-code-image" />
+            <p class="qr-code-label">Scan this QR code to quickly access your profile</p>
+            <button type="button" class="btn btn--sm btn--primary" (click)="downloadQRCode()">
+              Download QR Code
+            </button>
+          </div>
+        </div>
+        <h2 class="resident-name">{{ resident.name }}</h2>
+        
+        <div class="detail-section">
+          <h3 class="section-title">Personal Information</h3>
+          <p class="detail"><strong>Birthday:</strong> {{ resident.birthdate || 'N/A' }}</p>
+          <p class="detail"><strong>Place of Birth:</strong> {{ resident.placeOfBirth || 'Not Available' }}</p>
+          <p class="detail highlight">
+            <strong>Birth Certificate Number:</strong> 
+            <span class="certificate-ref">{{ resident.birthCertificateNumber || 'Not Available' }}</span>
+          </p>
+          <p class="detail"><strong>Blood Type:</strong> {{ resident.bloodType || 'Not Available' }}</p>
+          <p class="detail"><strong>Gender:</strong> {{ resident.gender }}</p>
+          <p class="detail" *ngIf="resident.civilStatus"><strong>Civil Status:</strong> {{ resident.civilStatus }}</p>
+          <p class="detail" *ngIf="resident.nationality"><strong>Nationality:</strong> {{ resident.nationality }}</p>
+        </div>
+
+        <div class="detail-section">
+          <h3 class="section-title">Contact Information</h3>
+          <p class="detail"><strong>Contact:</strong> {{ resident.contact || 'N/A' }}</p>
+          <p class="detail"><strong>Email:</strong> {{ resident.email || 'N/A' }}</p>
+          <p class="detail"><strong>Address:</strong> {{ resident.address || 'N/A' }}</p>
+          <p class="detail"><strong>Purok:</strong> {{ resident.purok }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="!resident" class="card">
+  <p class="muted">Profile data not found.</p>
+</div>

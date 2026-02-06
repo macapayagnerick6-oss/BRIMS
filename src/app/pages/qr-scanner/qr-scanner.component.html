@@ -1,0 +1,110 @@
+<div class="qr-scanner">
+  <div class="page-header">
+    <h1 class="page-title">QR Code Scanner</h1>
+    <a routerLink="/staff/dashboard" class="back-button">
+      <span class="back-button__icon">←</span>
+      <span class="back-button__text">Back</span>
+    </a>
+  </div>
+
+  @if (!hasPermission) {
+    <div class="permission-card card">
+      <div class="permission-icon">📷</div>
+      <h2>Camera Permission Required</h2>
+      <p>Please allow camera access to scan QR codes.</p>
+      <button type="button" class="btn btn--primary" (click)="retryPermission()">
+        Grant Permission
+      </button>
+    </div>
+  }
+
+  @if (hasPermission && scannerEnabled) {
+    <div class="scanner-container">
+      <div class="scanner-wrapper">
+        <zxing-scanner
+          [enable]="scannerEnabled"
+          [device]="selectedDevice"
+          [formats]="allowedFormats"
+          [torch]="torchEnabled"
+          (torchCompatible)="onTorchCompatible($event)"
+          (camerasFound)="onCamerasFound($event)"
+          (scanSuccess)="onScanSuccess($event)"
+          (scanError)="onScanError($event)"
+          class="scanner"
+        ></zxing-scanner>
+        
+        <div class="scanner-overlay">
+          <div class="scanner-frame">
+            <div class="scanner-frame__corners">
+              <div class="corner corner--top-left"></div>
+              <div class="corner corner--top-right"></div>
+              <div class="corner corner--bottom-left"></div>
+              <div class="corner corner--bottom-right"></div>
+            </div>
+          </div>
+          <p class="scanner-instruction">
+            <span class="scanner-instruction__icon">📱</span>
+            Position QR code within the frame
+          </p>
+        </div>
+      </div>
+
+      <div class="scanner-controls">
+        <div class="scanner-controls__row">
+          @if (availableDevices.length > 1) {
+            <div class="control-group">
+              <label for="camera-select">
+                <span class="control-label__icon">📷</span>
+                Camera
+              </label>
+              <select 
+                id="camera-select" 
+                class="form-control"
+                [value]="selectedDevice?.deviceId || ''"
+                (change)="onDeviceSelectChange($any($event.target).value)"
+              >
+                @for (device of availableDevices; track device.deviceId) {
+                  <option [value]="device.deviceId">{{ device.label || 'Camera ' + ($index + 1) }}</option>
+                }
+              </select>
+            </div>
+          }
+
+          @if (torchAvailable) {
+            <button 
+              type="button" 
+              class="btn btn--secondary btn--icon"
+              (click)="toggleTorch()"
+            >
+              <span class="btn-icon">{{ torchEnabled ? '🔦' : '💡' }}</span>
+              <span>{{ torchEnabled ? 'Turn Off Flash' : 'Turn On Flash' }}</span>
+            </button>
+          }
+        </div>
+      </div>
+    </div>
+  }
+
+  @if (scanResult) {
+    <div class="scan-result card">
+      <div class="scan-result__header">
+        <h3>QR Code Scanned!</h3>
+        <button 
+          type="button" 
+          class="btn btn--sm btn--secondary"
+          (click)="resetScanner()"
+        >
+          Scan Another
+        </button>
+      </div>
+      <div class="scan-result__content">
+        <p class="scan-result__code">{{ scanResult }}</p>
+        @if (scanError) {
+          <p class="scan-result__error">{{ scanError }}</p>
+        } @else {
+          <p class="scan-result__success">Processing...</p>
+        }
+      </div>
+    </div>
+  }
+</div>

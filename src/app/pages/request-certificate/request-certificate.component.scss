@@ -1,0 +1,33 @@
+.request-certificate { width: 100%; }
+
+.page-title { font-size: 1.5rem; font-weight: 600; margin: 0 0 1.5rem; }
+
+.form-card {
+  margin-bottom: 1.5rem;
+  .form-group .form-control { padding: 10px 14px; }
+  textarea.form-control { padding-left: 14px; min-height: 100px; resize: vertical; }
+  .btn { margin-top: 0.5rem; }
+}
+
+.success-msg { color: var(--color-success); margin: -0.5rem 0 1rem; font-weight: 500; }
+
+.my-requests-section {
+  h2 { font-size: 1.125rem; font-weight: 600; margin: 0 0 0.75rem; }
+}
+
+.requests-list { padding: 0 !important; }
+.request-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid var(--color-border);
+  &:last-child { border-bottom: none; }
+}
+.request-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  .request-type { font-weight: 500; }
+  .request-meta { font-size: 0.875rem; color: var(--color-text-muted); }
+}

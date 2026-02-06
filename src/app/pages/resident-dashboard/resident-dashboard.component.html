@@ -1,0 +1,41 @@
+<div class="resident-dashboard">
+  <h1 class="welcome">Welcome, {{ auth.currentUser?.name }}</h1>
+
+  <div class="quick-actions">
+    <a routerLink="/resident/profile" class="action-card action-card--blue">
+      <span class="action-icon">👤</span>
+      <span class="action-label">My Profile</span>
+    </a>
+    <a routerLink="/resident/request-certificate" class="action-card action-card--orange">
+      <span class="action-icon">📄</span>
+      <span class="action-label">Request Certificate</span>
+    </a>
+    <a routerLink="/resident/requests" class="action-card action-card--green">
+      <span class="action-icon">📋</span>
+      <span class="action-label">My Requests</span>
+    </a>
+  </div>
+
+  <div class="my-requests-section">
+    <div class="section-header">
+      <h2>My Requests</h2>
+      <select class="form-control form-control--sm">
+        <option>All</option>
+        <option>Pending</option>
+        <option>Approved</option>
+        <option>For Review</option>
+      </select>
+    </div>
+    <div class="requests-list card">
+      @for (r of requests; track r.id) {
+        <div class="request-row">
+          <div class="request-info">
+            <span class="request-type">{{ r.type }}</span>
+            <span class="request-meta">{{ r.status }} · {{ r.date }}</span>
+          </div>
+          <a routerLink="/resident/requests" class="btn btn--success btn--sm">See Status</a>
+        </div>
+      }
+    </div>
+  </div>
+</div>

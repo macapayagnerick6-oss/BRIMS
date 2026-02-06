@@ -1,0 +1,65 @@
+<div class="residents-list">
+  <div class="page-header">
+    <h1 class="page-title">Residents List</h1>
+  </div>
+  <div class="filters">
+    <input type="text" class="form-control" placeholder="Search by Name or ID" [(ngModel)]="search" />
+    <select class="form-control" [(ngModel)]="gender">
+      <option value="">Gender</option>
+      <option value="Male">Male</option>
+      <option value="Female">Female</option>
+    </select>
+    <select class="form-control" [(ngModel)]="age">
+      <option value="">Age</option>
+      <option value="0-17">0-17</option>
+      <option value="18-59">18-59</option>
+      <option value="60+">60+</option>
+    </select>
+    <select class="form-control" [(ngModel)]="purok">
+      <option value="">Purok</option>
+      <option value="Purok 1">Purok 1</option>
+      <option value="Purok 2">Purok 2</option>
+      <option value="Purok 3">Purok 3</option>
+    </select>
+  </div>
+  <div class="table-wrap card">
+    <table class="table">
+      <thead>
+        <tr>
+          <th><input type="checkbox" /></th>
+          <th>Resident ID</th>
+          <th>Name</th>
+          <th>Age</th>
+          <th>Gender</th>
+          <th>Purok</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (r of filteredResidents; track r.id) {
+          <tr>
+            <td><input type="checkbox" /></td>
+            <td><a [routerLink]="['/staff/residents', r.id]">{{ r.residentId }}</a></td>
+            <td>{{ r.name }}</td>
+            <td>{{ r.age }}</td>
+            <td>{{ r.gender }}</td>
+            <td>
+              <select class="purok-select">
+                <option [value]="r.purok" selected>{{ r.purok }}</option>
+                <option>Purok 1</option>
+                <option>Purok 2</option>
+                <option>Purok 3</option>
+              </select>
+            </td>
+          </tr>
+        }
+        @if (filteredResidents.length === 0) {
+          <tr>
+            <td colspan="6" style="text-align: center; padding: 2rem; color: var(--color-text-secondary, #6b7280);">
+              No residents found matching the filters.
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>

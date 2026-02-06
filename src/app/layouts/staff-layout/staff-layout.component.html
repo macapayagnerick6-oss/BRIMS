@@ -1,0 +1,110 @@
+<div class="staff-layout">
+  @if (!isMobileMenuOpen) {
+    <button 
+      class="mobile-menu-toggle" 
+      (click)="toggleMobileMenu()"
+      [attr.aria-label]="'Toggle menu'"
+      [attr.aria-expanded]="isMobileMenuOpen"
+      type="button"
+    >
+      <span class="mobile-menu-icon">☰</span>
+    </button>
+  }
+  
+  @if (isMobileMenuOpen) {
+    <div class="sidebar-backdrop" (click)="closeMobileMenu()"></div>
+  }
+  
+  <aside class="sidebar" [class.sidebar--open]="isMobileMenuOpen">
+    <div class="sidebar-header">
+      <img class="logo" src="/assets/images/FOR-DASHBOARD.png" alt="Logo" />
+      <button 
+        class="sidebar-close" 
+        (click)="closeMobileMenu()"
+        [attr.aria-label]="'Close menu'"
+        type="button"
+      >
+        ✕
+      </button>
+    </div>
+    <nav class="sidebar-nav">
+      @for (item of navItems; track item.path) {
+        <a
+          [routerLink]="item.path"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: item.path === '/staff/dashboard' }"
+          class="nav-item"
+          (click)="closeMobileMenu()"
+        >
+          <span class="nav-icon">{{ item.icon }}</span>
+          <span>{{ item.label }}</span>
+        </a>
+      }
+    </nav>
+    <div class="sidebar-footer">
+      <div class="time-display">
+        <div class="time-display__time">{{ currentTime | date:'h:mm:ss a' }}</div>
+        <div class="time-display__date">{{ currentTime | date:'EEEE, MMMM d, y' }}</div>
+      </div>
+    </div>
+  </aside>
+  <div class="main">
+    <main class="content">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+
+  @if (showTopRightUi) {
+    <div class="profile-menu" #profileMenu>
+      <button
+        type="button"
+        class="profile-menu__trigger"
+        [attr.aria-label]="'Profile menu'"
+        [attr.aria-expanded]="isProfileMenuOpen"
+        (click)="toggleProfileMenu()"
+      >
+        <svg class="profile-menu__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <circle cx="12" cy="8" r="3"/>
+          <path d="M5 20v-2a5 5 0 0 1 10 0v2"/>
+        </svg>
+      </button>
+      @if (isProfileMenuOpen) {
+        <div class="profile-menu__dropdown">
+          <a [routerLink]="['/staff/settings']" class="profile-menu__item" (click)="closeProfileMenu()">
+            <span class="profile-menu__item-icon">⚙</span>
+            Settings
+          </a>
+          <button type="button" class="profile-menu__item profile-menu__item--logout" (click)="logout(); closeProfileMenu()">
+            <span class="profile-menu__item-icon">⎋</span>
+            Logout
+          </button>
+        </div>
+      }
+    </div>
+
+    <button
+      type="button"
+      class="theme-toggle"
+      [attr.aria-label]="theme.isDark() ? 'Switch to light mode' : 'Switch to dark mode'"
+      (click)="theme.toggleTheme()"
+    >
+      @if (theme.isDark()) {
+        <svg class="theme-toggle__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <circle cx="12" cy="12" r="5"/>
+          <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+        </svg>
+      } @else {
+        <svg class="theme-toggle__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+        </svg>
+      }
+    </button>
+  }
+
+  @if (fabLink; as fab) {
+    <a [routerLink]="fab.link" class="fab" [attr.aria-label]="fab.label">
+      <span class="fab__icon">+</span>
+      <span class="fab__label">{{ fab.label }}</span>
+    </a>
+  }
+</div>

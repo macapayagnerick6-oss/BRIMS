@@ -1,0 +1,265 @@
+<div class="resident-profile" *ngIf="resident">
+  <div class="page-header">
+    <h1 class="page-title">Resident Profile</h1>
+    <div class="page-header__right">
+      <button type="button" class="btn btn--success" (click)="openGenerateCertificate()">Generate Certificate</button>
+      <a routerLink="/staff/residents" class="back-button">
+        <span class="back-button__icon">←</span>
+        <span class="back-button__text">Back to Residents</span>
+      </a>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <button type="button" [class.active]="activeTab === 'personal'" (click)="activeTab = 'personal'">Personal Information</button>
+    <button type="button" [class.active]="activeTab === 'household'" (click)="activeTab = 'household'">Household Information</button>
+    <button type="button" [class.active]="activeTab === 'requests'" (click)="activeTab = 'requests'">Requests History</button>
+  </div>
+
+  @if (activeTab === 'personal') {
+    <div class="profile-card card">
+      <div class="profile-top">
+        <div class="avatar-lg"></div>
+        <div class="profile-info">
+          <p class="resident-id">Resident ID: {{ resident.residentId }}</p>
+          <div class="qr-code-section">
+            <button type="button" class="btn btn--sm btn--outline" (click)="toggleQRCode()">
+              {{ showQRCode ? 'Hide' : 'Show' }} QR Code
+            </button>
+            @if (showQRCode && qrCodeDataUrl) {
+              <div class="qr-code-display">
+                <img [src]="qrCodeDataUrl" alt="Resident QR Code" class="qr-code-image" />
+                <p class="qr-code-label">Scan this QR code to quickly access this resident's profile</p>
+                <button type="button" class="btn btn--sm btn--primary" (click)="downloadQRCode()">
+                  Download QR Code
+                </button>
+              </div>
+            }
+          </div>
+          <h2 class="resident-name">
+            @if (editingField === 'name') {
+              <span class="edit-inline">
+                <input type="text" class="form-control edit-inline__input" [(ngModel)]="editValue" (keydown.enter)="saveEdit()" (keydown.escape)="cancelEdit()" />
+                <button type="button" class="btn btn--sm btn--primary" (click)="saveEdit()">Save</button>
+                <button type="button" class="btn btn--sm btn--outline" (click)="cancelEdit()">Cancel</button>
+              </span>
+            } @else {
+              {{ resident.name }}
+              <a href="#" class="edit-link" (click)="startEdit('name'); $event.preventDefault()">Edit Name</a>
+            }
+          </h2>
+          <p class="detail"><strong>Full Name:</strong> {{ resident.name }}</p>
+          <p class="detail"><strong>Birthday:</strong> {{ resident.birthdate || 'N/A' }}</p>
+          <p class="detail"><strong>Place of Birth:</strong> {{ resident.placeOfBirth || 'N/A' }}</p>
+          <p class="detail highlight">
+            <strong>Birth Certificate Number:</strong> 
+            <span class="certificate-ref">{{ resident.birthCertificateNumber || 'Not Available' }}</span>
+          </p>
+          <p class="detail"><strong>Blood Type:</strong> {{ resident.bloodType || 'N/A' }}</p>
+          <p class="detail"><strong>Gender:</strong> {{ resident.gender }}</p>
+          <p class="detail"><strong>Civil Status:</strong> {{ resident.civilStatus || 'N/A' }}</p>
+          <p class="detail"><strong>Nationality:</strong> {{ resident.nationality || 'N/A' }}</p>
+          <p class="detail">
+            <strong>Contact Number:</strong>
+            @if (editingField === 'contact') {
+              <span class="edit-inline">
+                <input type="text" class="form-control edit-inline__input" [(ngModel)]="editValue" (keydown.enter)="saveEdit()" (keydown.escape)="cancelEdit()" placeholder="Contact number" />
+                <button type="button" class="btn btn--sm btn--primary" (click)="saveEdit()">Save</button>
+                <button type="button" class="btn btn--sm btn--outline" (click)="cancelEdit()">Cancel</button>
+              </span>
+            } @else {
+              {{ resident.contact || 'N/A' }}
+              <a href="#" class="edit-link" (click)="startEdit('contact'); $event.preventDefault()">Edit</a>
+            }
+          </p>
+          <p class="detail">
+            <strong>Email Address:</strong>
+            @if (editingField === 'email') {
+              <span class="edit-inline">
+                <input type="email" class="form-control edit-inline__input" [(ngModel)]="editValue" (keydown.enter)="saveEdit()" (keydown.escape)="cancelEdit()" placeholder="Email address" />
+                <button type="button" class="btn btn--sm btn--primary" (click)="saveEdit()">Save</button>
+                <button type="button" class="btn btn--sm btn--outline" (click)="cancelEdit()">Cancel</button>
+              </span>
+            } @else {
+              {{ resident.email || 'N/A' }}
+              <a href="#" class="edit-link" (click)="startEdit('email'); $event.preventDefault()">Edit</a>
+            }
+          </p>
+          <p class="detail">
+            <strong>Address:</strong>
+            @if (editingField === 'address') {
+              <span class="edit-inline">
+                <input type="text" class="form-control edit-inline__input" [(ngModel)]="editValue" (keydown.enter)="saveEdit()" (keydown.escape)="cancelEdit()" placeholder="Address" />
+                <button type="button" class="btn btn--sm btn--primary" (click)="saveEdit()">Save</button>
+                <button type="button" class="btn btn--sm btn--outline" (click)="cancelEdit()">Cancel</button>
+              </span>
+            } @else {
+              {{ resident.address || 'N/A' }}
+              <a href="#" class="edit-link" (click)="startEdit('address'); $event.preventDefault()">Edit Address</a>
+            }
+          </p>
+          <p class="detail"><strong>Purok:</strong> {{ resident.purok }}</p>
+        </div>
+      </div>
+    </div>
+  }
+  @if (activeTab === 'household') {
+    @if (household) {
+      <div class="household-info card">
+        <div class="household-header">
+          <h2 class="household-title">Household Information</h2>
+        </div>
+        <div class="household-details">
+          <div class="detail-row">
+            <span class="detail-label">Household ID:</span>
+            <span class="detail-value">{{ household.householdId }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Address:</span>
+            <span class="detail-value">{{ household.address }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Purok:</span>
+            <span class="detail-value">{{ household.purok }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Total Members:</span>
+            <span class="detail-value">{{ household.members.length }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="household-members card">
+        <div class="section-header">
+          <h3 class="section-title">Household Members</h3>
+        </div>
+        <div class="table-wrap">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Resident ID</th>
+                <th>Name</th>
+                <th>Age</th>
+                <th>Gender</th>
+                <th>Relationship</th>
+                <th>Birthdate</th>
+                <th>Civil Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (member of household.members; track member.residentId) {
+                <tr>
+                  <td>{{ member.residentId }}</td>
+                  <td>{{ member.name }}</td>
+                  <td>{{ member.age }}</td>
+                  <td>{{ member.gender }}</td>
+                  <td>
+                    <span class="badge badge--info">{{ member.relationship }}</span>
+                  </td>
+                  <td>{{ member.birthdate || 'N/A' }}</td>
+                  <td>{{ member.civilStatus || 'N/A' }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    } @else {
+      <div class="card">
+        <p class="muted">No household information available for this resident.</p>
+        <p class="muted" style="font-size: 0.875rem; margin-top: 0.5rem;">
+          Resident ID: {{ resident.residentId || 'N/A' }}
+        </p>
+      </div>
+    }
+  }
+  @if (activeTab === 'requests') {
+    <div class="card">
+      <h3 class="section-title">Requests History</h3>
+      @if (residentRequests.length > 0) {
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Type</th>
+              <th>Purpose</th>
+              <th>Status</th>
+              <th>Date</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (r of residentRequests; track r.id) {
+              <tr>
+                <td>{{ r.type }}</td>
+                <td>{{ r.purpose }}</td>
+                <td>
+                  <span class="badge" [ngClass]="{
+                    'badge--success': r.status === 'Approved',
+                    'badge--warning': r.status === 'Pending' || r.status === 'For Review'
+                  }">{{ r.status }}</span>
+                </td>
+                <td>{{ r.date }}</td>
+                <td>
+                  <a [routerLink]="['/staff/requests', r.id]" class="btn btn--sm btn--primary">View Details</a>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      } @else {
+        <p class="muted">No certificate requests for this resident yet.</p>
+      }
+    </div>
+  }
+</div>
+
+@if (showGenerateCertificate) {
+  <div class="modal-overlay" (click)="closeGenerateCertificate()">
+    <div class="modal card" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2 class="modal-title">Generate Certificate</h2>
+        <button type="button" class="modal-close" (click)="closeGenerateCertificate()" aria-label="Close">&times;</button>
+      </div>
+      @if (generateSuccess) {
+        <div class="modal-body">
+          <p class="success-msg">Certificate request created successfully and marked as Approved.</p>
+          <div class="modal-actions">
+            <button type="button" class="btn btn--primary" (click)="goToCreatedRequest()">View Request</button>
+            <button type="button" class="btn btn--outline" (click)="closeGenerateCertificate()">Close</button>
+          </div>
+        </div>
+      } @else {
+        <form class="modal-body" (ngSubmit)="submitGenerateCertificate()">
+          <p class="muted modal-desc">Create a certificate request for {{ resident?.name }} ({{ resident?.residentId }}).</p>
+          <div class="form-group">
+            <label for="cert-type">Certificate Type</label>
+            <select id="cert-type" class="form-control" [(ngModel)]="certificateType" name="certificateType">
+              @for (t of certificateTypes; track t) {
+                <option [value]="t">{{ t }}</option>
+              }
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="cert-purpose">Purpose</label>
+            <textarea
+              id="cert-purpose"
+              class="form-control"
+              [(ngModel)]="certificatePurpose"
+              name="certificatePurpose"
+              rows="3"
+              placeholder="e.g. For employment purposes"
+            ></textarea>
+          </div>
+          <div class="modal-actions">
+            <button type="submit" class="btn btn--success">Generate & Approve</button>
+            <button type="button" class="btn btn--outline" (click)="closeGenerateCertificate()">Cancel</button>
+          </div>
+        </form>
+      }
+    </div>
+  </div>
+}
+
+<div *ngIf="!resident" class="card">
+  <p>Resident not found. <a routerLink="/staff/residents">Back to Residents</a></p>
+</div>

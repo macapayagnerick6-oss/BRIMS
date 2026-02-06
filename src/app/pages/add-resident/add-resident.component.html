@@ -1,0 +1,222 @@
+<div class="add-resident">
+  <div class="page-header">
+    <h1 class="page-title">Add New Resident</h1>
+    <a routerLink="/staff/residents" class="btn btn--outline">← Back to Residents List</a>
+  </div>
+
+  <div class="form-card card">
+    <form (ngSubmit)="submit()">
+      <div class="form-section">
+        <h2 class="section-title">Personal Information</h2>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="name">Full Name <span class="required">*</span></label>
+            <input
+              type="text"
+              id="name"
+              class="form-control"
+              [(ngModel)]="resident.name"
+              name="name"
+              placeholder="Enter full name"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="age">Age <span class="required">*</span></label>
+            <input
+              type="number"
+              id="age"
+              class="form-control"
+              [(ngModel)]="resident.age"
+              name="age"
+              placeholder="Enter age"
+              min="0"
+              max="120"
+              required
+            />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="gender">Gender <span class="required">*</span></label>
+            <select id="gender" class="form-control" [(ngModel)]="resident.gender" name="gender" required>
+              <option value="">Select gender</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="birthdate">Birthdate</label>
+            <input
+              type="date"
+              id="birthdate"
+              class="form-control"
+              [(ngModel)]="resident.birthdate"
+              name="birthdate"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="placeOfBirth">Place of Birth</label>
+            <input
+              type="text"
+              id="placeOfBirth"
+              class="form-control"
+              [(ngModel)]="resident.placeOfBirth"
+              name="placeOfBirth"
+              placeholder="e.g. Villanueva, Misamis Oriental"
+            />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="birthCertificateNumber">Birth Certificate Number</label>
+            <input
+              type="text"
+              id="birthCertificateNumber"
+              class="form-control"
+              [(ngModel)]="resident.birthCertificateNumber"
+              name="birthCertificateNumber"
+              placeholder="e.g. BC-1980-001234"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="bloodType">Blood Type</label>
+            <select id="bloodType" class="form-control" [(ngModel)]="resident.bloodType" name="bloodType">
+              <option value="">Select blood type</option>
+              <option value="A+">A+</option>
+              <option value="A-">A-</option>
+              <option value="B+">B+</option>
+              <option value="B-">B-</option>
+              <option value="AB+">AB+</option>
+              <option value="AB-">AB-</option>
+              <option value="O+">O+</option>
+              <option value="O-">O-</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="civilStatus">Civil Status</label>
+            <select id="civilStatus" class="form-control" [(ngModel)]="resident.civilStatus" name="civilStatus">
+              <option value="">Select civil status</option>
+              <option value="Single">Single</option>
+              <option value="Married">Married</option>
+              <option value="Widowed">Widowed</option>
+              <option value="Divorced">Divorced</option>
+              <option value="Separated">Separated</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="nationality">Nationality</label>
+            <input
+              type="text"
+              id="nationality"
+              class="form-control"
+              [(ngModel)]="resident.nationality"
+              name="nationality"
+              placeholder="e.g. Filipino"
+            />
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h2 class="section-title">Login Credentials (Resident Portal)</h2>
+        <p class="section-description">Email and password for residents to sign in to the resident portal.</p>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="email">Email <span class="required">*</span></label>
+            <input
+              type="email"
+              id="email"
+              class="form-control"
+              [(ngModel)]="resident.email"
+              name="email"
+              placeholder="e.g. resident@email.com"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="password">Password <span class="required">*</span></label>
+            <input
+              type="password"
+              id="password"
+              class="form-control"
+              [(ngModel)]="resident.password"
+              name="password"
+              placeholder="Set login password"
+              required
+            />
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h2 class="section-title">Contact & Address Information</h2>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="contact">Contact Number</label>
+            <input
+              type="tel"
+              id="contact"
+              class="form-control"
+              [(ngModel)]="resident.contact"
+              name="contact"
+              placeholder="e.g. 0917 123 4567"
+            />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="address">Address</label>
+          <textarea
+            id="address"
+            class="form-control"
+            [(ngModel)]="resident.address"
+            name="address"
+            rows="3"
+            placeholder="Enter complete address"
+          ></textarea>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h2 class="section-title">Barangay Information</h2>
+        
+        <div class="form-group">
+          <label for="purok">Purok <span class="required">*</span></label>
+          <select id="purok" class="form-control" [(ngModel)]="resident.purok" name="purok" required>
+            <option value="">Select purok</option>
+            <option value="Purok 1">Purok 1</option>
+            <option value="Purok 2">Purok 2</option>
+            <option value="Purok 3">Purok 3</option>
+          </select>
+        </div>
+      </div>
+
+      @if (error) {
+        <div class="error-msg">{{ error }}</div>
+      }
+
+      @if (submitted) {
+        <div class="success-msg">Resident added successfully! Redirecting to residents list...</div>
+      }
+
+      <div class="form-actions">
+        <button type="button" class="btn btn--outline" (click)="reset()">Reset Form</button>
+        <button type="submit" class="btn btn--primary" [disabled]="submitted">Add Resident</button>
+      </div>
+    </form>
+  </div>
+</div>

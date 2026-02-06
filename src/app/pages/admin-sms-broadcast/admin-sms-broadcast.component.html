@@ -1,0 +1,198 @@
+<div class="notifications-page">
+  <div class="page-header">
+    <h1 class="page-title">Resident Notifications</h1>
+  </div>
+
+  <div class="tabs-wrapper">
+    <nav class="tabs" role="tablist">
+      <button
+        type="button"
+        class="tab-button"
+        [class.active]="activeTab === 'sms'"
+        (click)="setActiveTab('sms')"
+        role="tab"
+        [attr.aria-selected]="activeTab === 'sms'"
+      >
+        SMS
+      </button>
+      <button
+        type="button"
+        class="tab-button"
+        [class.active]="activeTab === 'email'"
+        (click)="setActiveTab('email')"
+        role="tab"
+        [attr.aria-selected]="activeTab === 'email'"
+      >
+        Email
+      </button>
+    </nav>
+  </div>
+
+  <div class="notifications-broadcast">
+    <section class="sms-broadcast" *ngIf="activeTab === 'sms'">
+    <h1 class="sms-broadcast__title">SMS Notifications</h1>
+    <p class="sms-broadcast__subtitle">
+      Send an SMS notification to a single resident or broadcast to all residents with a contact number.
+    </p>
+
+    <div class="recipient-toggle">
+      <button
+        type="button"
+        class="recipient-toggle__button"
+        [class.active]="!broadcastSmsToAllResidents"
+        (click)="broadcastSmsToAllResidents = false"
+      >
+        Single recipient
+      </button>
+      <button
+        type="button"
+        class="recipient-toggle__button"
+        [class.active]="broadcastSmsToAllResidents"
+        (click)="broadcastSmsToAllResidents = true"
+      >
+        All residents ({{ smsBroadcastCount }})
+      </button>
+    </div>
+
+    <form class="sms-broadcast__form" (ngSubmit)="sendSms()">
+      <div class="form-field" *ngIf="!broadcastSmsToAllResidents">
+        <label class="form-label" for="phone">Recipient phone number</label>
+        <input
+          id="phone"
+          name="phone"
+          class="form-input"
+          type="tel"
+          [(ngModel)]="phone"
+          placeholder="+63 9XXXXXXXXX"
+          [disabled]="isSending"
+        />
+      </div>
+
+      <div class="form-field">
+        <label class="form-label" for="message">Message</label>
+        <textarea
+          id="message"
+          name="message"
+          class="form-textarea"
+          rows="4"
+          [(ngModel)]="message"
+          placeholder="Type your SMS notification here..."
+          [disabled]="isSending"
+        ></textarea>
+        <div class="form-help" *ngIf="!broadcastSmsToAllResidents">
+          SMS messages longer than 160 characters may be split into multiple parts depending on your provider.
+        </div>
+        <div class="form-help" *ngIf="broadcastSmsToAllResidents">
+          This will send the message to all residents with a contact number ({{ smsBroadcastCount }}).
+        </div>
+      </div>
+
+      <button class="btn btn--primary" type="submit" [disabled]="isSending">
+        {{ isSending ? 'Sending…' : 'Send SMS' }}
+      </button>
+    </form>
+    </section>
+
+    <section class="email-broadcast" *ngIf="activeTab === 'email'">
+    <h2 class="email-broadcast__title">Email Notifications</h2>
+    <p class="email-broadcast__subtitle">
+      Send an email notification to a single resident or broadcast to all residents with an email address.
+    </p>
+
+    <div class="recipient-toggle">
+      <button
+        type="button"
+        class="recipient-toggle__button"
+        [class.active]="!broadcastEmailToAllResidents"
+        (click)="broadcastEmailToAllResidents = false"
+      >
+        Single recipient
+      </button>
+      <button
+        type="button"
+        class="recipient-toggle__button"
+        [class.active]="broadcastEmailToAllResidents"
+        (click)="broadcastEmailToAllResidents = true"
+      >
+        All residents ({{ emailBroadcastCount }})
+      </button>
+    </div>
+
+    <form class="email-broadcast__form" (ngSubmit)="sendEmail()">
+      <div class="form-field" *ngIf="!broadcastEmailToAllResidents">
+        <label class="form-label" for="email">Recipient email address</label>
+        <input
+          id="email"
+          name="email"
+          class="form-input"
+          type="email"
+          [(ngModel)]="email"
+          placeholder="resident@example.com"
+          [disabled]="isSendingEmail"
+        />
+      </div>
+
+      <div class="form-field">
+        <label class="form-label" for="subject">Subject</label>
+        <input
+          id="subject"
+          name="subject"
+          class="form-input"
+          type="text"
+          [(ngModel)]="subject"
+          placeholder="Subject line"
+          [disabled]="isSendingEmail"
+        />
+      </div>
+
+      <div class="form-field">
+        <label class="form-label" for="emailMessage">Message</label>
+        <div class="textarea-with-attachment">
+          <textarea
+            id="emailMessage"
+            name="emailMessage"
+            class="form-textarea"
+            rows="5"
+            [(ngModel)]="emailMessage"
+            placeholder="Type your email message here..."
+            [disabled]="isSendingEmail"
+          ></textarea>
+
+          <input
+            #emailAttachmentInput
+            id="emailAttachment"
+            name="emailAttachment"
+            type="file"
+            (change)="onEmailFileSelected($event)"
+            [disabled]="isSendingEmail"
+            style="display: none;"
+          />
+
+          <button
+            type="button"
+            class="attachment-button"
+            (click)="emailAttachmentInput.click()"
+            [disabled]="isSendingEmail"
+            aria-label="Attach file"
+          >
+            📎
+          </button>
+        </div>
+        <div class="form-help" *ngIf="emailAttachmentName">
+          Attached: {{ emailAttachmentName }}
+          <button type="button" class="link-button" (click)="clearEmailAttachment()">Remove</button>
+        </div>
+      </div>
+
+      <div class="form-help" *ngIf="broadcastEmailToAllResidents">
+        This will send the email to all residents with an email address ({{ emailBroadcastCount }}).
+      </div>
+
+      <button class="btn btn--primary" type="submit" [disabled]="isSendingEmail">
+        {{ isSendingEmail ? 'Sending…' : 'Send Email' }}
+      </button>
+    </form>
+    </section>
+  </div>
+</div>
+

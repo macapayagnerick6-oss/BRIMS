@@ -1,0 +1,79 @@
+<div class="household-detail" *ngIf="household">
+  <div class="page-header">
+    <h1 class="page-title">Household Details</h1>
+    <a routerLink="/staff/households" class="btn btn--outline">← Back to Households</a>
+  </div>
+
+  <div class="household-info card">
+    <div class="household-header">
+      <div class="household-header-left">
+        <h2 class="household-title">{{ household.householdId }}</h2>
+        <p class="household-subtitle">Head of Household: {{ getHeadOfHousehold() }}</p>
+      </div>
+      <a [routerLink]="['/staff/households', household.id, 'edit']" class="btn btn--primary">Edit Household</a>
+    </div>
+    <div class="household-details">
+      <div class="detail-row">
+        <span class="detail-label">Household ID</span>
+        <span class="detail-value">{{ household.householdId }}</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Address</span>
+        <span class="detail-value">{{ household.address }}</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Purok</span>
+        <span class="detail-value">{{ household.purok }}</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Total Members</span>
+        <span class="detail-value">{{ household.members.length }}</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="household-members card">
+    <div class="section-header">
+      <h3 class="section-title">Household Members</h3>
+    </div>
+    <div class="table-wrap">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Resident ID</th>
+            <th>Name</th>
+            <th>Age</th>
+            <th>Gender</th>
+            <th>Relationship</th>
+            <th>Birthdate</th>
+            <th>Civil Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (member of household.members; track member.residentId) {
+            <tr>
+              <td>{{ member.residentId }}</td>
+              <td>{{ member.name }}</td>
+              <td>{{ member.age }}</td>
+              <td>{{ member.gender }}</td>
+              <td>
+                <span class="badge badge--info">{{ member.relationship }}</span>
+              </td>
+              <td>{{ member.birthdate || 'N/A' }}</td>
+              <td>{{ member.civilStatus || 'N/A' }}</td>
+              <td>
+                <a [routerLink]="['/staff/residents', data.getResidentByResidentId(member.residentId)?.id]" class="btn btn--sm btn--primary" *ngIf="data.getResidentByResidentId(member.residentId)">View</a>
+                <span *ngIf="!data.getResidentByResidentId(member.residentId)" class="text-muted">—</span>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="!household" class="card">
+  <p>Household not found. <a routerLink="/staff/households">Back to Households</a></p>
+</div>

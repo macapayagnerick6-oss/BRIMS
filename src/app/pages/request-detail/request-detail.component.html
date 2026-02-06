@@ -1,0 +1,104 @@
+<div class="request-detail">
+  @if (request) {
+    <div class="card">
+      <div class="request-header">
+        <h1 class="page-title">Request Details</h1>
+        <a routerLink="/staff/requests" class="back-button">
+          <span class="back-button__icon">←</span>
+          <span class="back-button__text">Back to Requests</span>
+        </a>
+      </div>
+
+      <div class="request-info">
+        <div class="info-section">
+          <h2>Request Information</h2>
+          <div class="info-grid">
+            <div class="info-item">
+              <span class="info-label">Request ID:</span>
+              <span class="info-value">{{ request.id }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Requested By:</span>
+              <span class="info-value">
+                @if (requester) {
+                  {{ requester.name }} ({{ requester.residentId }})
+                } @else {
+                  <span class="muted">Not linked to a resident</span>
+                }
+              </span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Address / Purok:</span>
+              <span class="info-value">
+                @if (requester) {
+                  {{ requester.address || ('Purok ' + requester.purok) }}
+                } @else {
+                  <span class="muted">N/A</span>
+                }
+              </span>
+            </div>
+            <div class="info-item qr-code-item">
+              <span class="info-label">QR Code:</span>
+              <div class="qr-code-controls">
+                <button type="button" class="btn btn--sm btn--outline" (click)="toggleQRCode()">
+                  {{ showQRCode ? 'Hide' : 'Show' }} QR Code
+                </button>
+                @if (showQRCode && qrCodeDataUrl) {
+                  <div class="qr-code-display">
+                    <img [src]="qrCodeDataUrl" alt="Request QR Code" class="qr-code-image" />
+                    <p class="qr-code-label">Scan this QR code to quickly access this request</p>
+                    <button type="button" class="btn btn--sm btn--primary" (click)="downloadQRCode()">
+                      Download QR Code
+                    </button>
+                  </div>
+                }
+              </div>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Type:</span>
+              <span class="info-value">{{ request.type }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Purpose:</span>
+              <span class="info-value">{{ request.purpose }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Status:</span>
+              <span class="info-value">
+                <span class="badge" [ngClass]="{
+                  'badge--success': request.status === 'Approved',
+                  'badge--warning': request.status === 'Pending' || request.status === 'For Review'
+                }">
+                  {{ request.status }}
+                </span>
+              </span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Date:</span>
+              <span class="info-value">{{ request.date }}</span>
+            </div>
+          </div>
+        </div>
+
+        @if (request.status === 'Pending' || request.status === 'For Review') {
+          <div class="action-section">
+            <h2>Actions</h2>
+            <div class="action-buttons">
+              <button class="btn btn--success" type="button" (click)="approveRequest()">Approve</button>
+              <button class="btn btn--danger" type="button" (click)="rejectRequest()">Reject</button>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  } @else {
+    <div class="card">
+      <h1 class="page-title">Request Not Found</h1>
+      <p class="muted">The request you're looking for doesn't exist.</p>
+      <a routerLink="/staff/requests" class="back-button">
+        <span class="back-button__icon">←</span>
+        <span class="back-button__text">Back to Requests</span>
+      </a>
+    </div>
+  }
+</div>

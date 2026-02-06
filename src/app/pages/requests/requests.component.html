@@ -1,0 +1,30 @@
+<div class="card">
+  <h1>Requests</h1>
+  <p class="muted">Certificate and clearance requests from residents.</p>
+  <table class="table">
+    <thead>
+      <tr><th>Type</th><th>Purpose</th><th>Status</th><th>Date</th><th>Actions</th></tr>
+    </thead>
+    <tbody>
+      @for (r of requests; track r.id) {
+        <tr>
+          <td>{{ r.type }}</td>
+          <td>{{ r.purpose }}</td>
+          <td>
+            <span
+              class="badge"
+              [ngClass]="{
+                'badge--success': r.status === 'Approved',
+                'badge--warning': r.status === 'Pending' || r.status === 'For Review' || r.status === 'Rejected'
+              }"
+            >
+              {{ r.status }}
+            </span>
+          </td>
+          <td>{{ r.date }}</td>
+          <td><a [routerLink]="['/staff/requests', r.id]" class="btn btn--sm btn--primary">View Details</a></td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</div>

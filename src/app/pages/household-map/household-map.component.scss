@@ -1,0 +1,332 @@
+.household-map-page {
+  .household-map-layout {
+    margin-top: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+}
+
+/* On map page we hide the top-right buttons,
+   so we can use the full width without extra padding */
+.household-map-page .page-header {
+  padding-right: 0;
+}
+
+.household-map-layout__top {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+@media (min-width: 1024px) {
+  .household-map-layout__top {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+
+  /* Make info + filters split space evenly */
+  .household-map-layout__info,
+  .household-map-filters {
+    flex: 1 1 0;
+    max-width: 50%;
+  }
+
+  /* Keep some breathing room between columns */
+  .household-map-layout__top {
+    gap: 1.25rem;
+  }
+}
+
+.household-map-layout__summary {
+  margin: 0 0 0.25rem;
+  color: var(--color-text-muted);
+  font-size: 0.95rem;
+}
+
+.household-map-layout__warning {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--color-warning);
+}
+
+.household-map-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+}
+
+.household-map-stat {
+  padding: 0.6rem 0.9rem;
+  border-radius: var(--radius);
+  background-color: var(--color-bg-secondary);
+  min-width: 140px;
+}
+
+.household-map-stat__label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-text-muted);
+  margin-bottom: 0.25rem;
+}
+
+.household-map-stat__value {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.household-map-filters {
+  padding: 0.75rem 1rem;
+  background-color: var(--color-bg-secondary);
+  border-radius: var(--radius);
+  border: 1px solid var(--color-border);
+}
+
+.household-map-filters__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.household-map-filters__title {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.household-map-filters__clear {
+  padding: 0.4rem 0.75rem;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--color-primary);
+  background: transparent;
+  border: 1px solid var(--color-primary);
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: var(--color-primary-bg);
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+.household-map-filters__grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: flex-end;
+}
+
+.household-map-filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex: 1 1 200px;
+  min-width: 180px;
+}
+
+.household-map-filter-group__label {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  margin: 0;
+}
+
+.household-map-filter-group__icon {
+  font-size: 0.9rem;
+  line-height: 1;
+}
+
+.household-map-filter-group__input-wrapper {
+  position: relative;
+}
+
+.household-map-filter-group__input {
+  width: 100%;
+  padding: 0.65rem 0.85rem;
+  font-size: 0.9rem;
+  border: 1px solid var(--color-input-border);
+  border-radius: var(--radius);
+  background: var(--color-bg-input);
+  color: var(--color-text-input);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+  &:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+  }
+
+  &::placeholder {
+    color: var(--color-input-placeholder);
+  }
+}
+
+@media (max-width: 768px) {
+  .household-map-filters__grid {
+    flex-direction: column;
+  }
+
+  .household-map-filter-group {
+    flex: 1 1 100%;
+    min-width: 100%;
+  }
+
+  .household-map-filters__header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .household-map-filters__clear {
+    width: 100%;
+  }
+}
+
+.household-map-layout__body {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 3fr);
+  gap: 1rem;
+  align-items: stretch;
+}
+
+.household-map-layout__body--no-legend {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.household-map-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.household-map-legend__group {
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius);
+  background-color: var(--color-bg-secondary);
+}
+
+.household-map-legend__title {
+  margin: 0 0 0.5rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.household-map-legend__items {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.household-map-legend__item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+}
+
+.household-map-legend__marker {
+  width: 14px;
+  height: 14px;
+  border-radius: 999px;
+  flex-shrink: 0;
+}
+
+.household-map-legend__marker--bordered {
+  background-color: transparent;
+  border: 3px solid var(--color-primary);
+}
+
+.household-map-legend__label {
+  flex: 1;
+}
+
+.household-map-legend__count {
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.household-map-container {
+  width: 100%;
+  /* Slightly smaller than full viewport so it fits
+     below the header, filters, and stats without
+     forcing extra vertical scrolling on most screens. */
+  height: calc(100vh - 320px);
+  min-height: 360px;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.household-map-missing {
+  border-top: 1px solid var(--color-border);
+  padding-top: 0.75rem;
+}
+
+.household-map-missing__title {
+  margin: 0 0 0.5rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.household-map-missing__list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.household-map-missing__item {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+}
+
+.household-map-missing__id {
+  font-weight: 600;
+}
+
+.household-map-missing__address {
+  opacity: 0.9;
+}
+
+@media (max-width: 768px) {
+  .household-map-layout__body {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .household-map-legend {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .household-map-legend__group {
+    flex: 1 1 160px;
+  }
+
+  .household-map-container {
+    height: calc(100vh - 320px);
+  }
+}
+

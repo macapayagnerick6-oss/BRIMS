@@ -1,0 +1,47 @@
+<div class="request-certificate">
+  <h1 class="page-title">Request Certificate</h1>
+
+  <div class="form-card card">
+    <form (ngSubmit)="submit()">
+      <div class="form-group">
+        <label for="doctype">Type of Document</label>
+        <select id="doctype" class="form-control" [(ngModel)]="docType" name="docType">
+          <option>Barangay Clearance</option>
+          <option>Certificate of Residency</option>
+          <option>Request Clearance</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="purpose">Purpose</label>
+        <textarea
+          id="purpose"
+          class="form-control"
+          [(ngModel)]="purpose"
+          name="purpose"
+          rows="4"
+          placeholder="e.g. For employment purposes"
+        ></textarea>
+      </div>
+      <button type="submit" class="btn btn--success">Submit Request</button>
+    </form>
+  </div>
+
+  @if (submitted) {
+    <p class="success-msg">Request submitted successfully.</p>
+  }
+
+  <div class="my-requests-section">
+    <h2>My Requests</h2>
+    <div class="requests-list card">
+      @for (r of requests; track r.id) {
+        <div class="request-row">
+          <div class="request-info">
+            <span class="request-type">{{ r.type }}</span>
+            <span class="request-meta">{{ r.status }} · {{ r.date }}</span>
+          </div>
+          <a routerLink="/resident/requests" class="btn btn--success btn--sm">See Status</a>
+        </div>
+      }
+    </div>
+  </div>
+</div>

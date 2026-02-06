@@ -1,0 +1,150 @@
+<div class="edit-household" *ngIf="household">
+  <div class="page-header">
+    <h1 class="page-title">Edit Household</h1>
+    <a [routerLink]="['/staff/households', household.id]" class="btn btn--outline back-link-corner">← Back to Household Details</a>
+  </div>
+
+  <div class="form-card card">
+    <form (ngSubmit)="submit()">
+      <div class="form-section">
+        <h2 class="section-title">Household Information</h2>
+        
+        <div class="form-group">
+          <label for="address">Address <span class="required">*</span></label>
+          <textarea
+            id="address"
+            class="form-control"
+            [(ngModel)]="address"
+            name="address"
+            rows="3"
+            placeholder="Enter complete address"
+            required
+          ></textarea>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="purok">Purok <span class="required">*</span></label>
+            <select id="purok" class="form-control" [(ngModel)]="purok" name="purok" required>
+              <option value="">Select purok</option>
+              <option value="Purok 1">Purok 1</option>
+              <option value="Purok 2">Purok 2</option>
+              <option value="Purok 3">Purok 3</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h2 class="section-title">Location on Map (optional)</h2>
+        <p class="help-text">
+          Click on the map to update this household's approximate location. This will be used in the Household Map view.
+        </p>
+        <div class="household-location-map-wrapper">
+          <div
+            id="edit-household-map"
+            class="household-location-map"
+            aria-label="Set household location on map"
+          ></div>
+        </div>
+        <div class="household-location-coords" *ngIf="latitude !== null && longitude !== null">
+          <span>Lat: {{ latitude }}</span>
+          <span>Lng: {{ longitude }}</span>
+          <button
+            type="button"
+            class="btn btn--outline btn--sm"
+            (click)="clearLocation()"
+          >
+            Clear location
+          </button>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h2 class="section-title">Head of Household</h2>
+        
+        <div class="form-group">
+          <label for="headResident">Select Head of Household <span class="required">*</span></label>
+          <select 
+            id="headResident" 
+            class="form-control" 
+            [(ngModel)]="selectedHeadResidentId" 
+            name="headResident" 
+            required
+          >
+            <option value="">Select a resident</option>
+            @for (resident of availableResidents; track resident.id) {
+              <option [value]="resident.id">
+                {{ resident.residentId }} - {{ resident.name }} ({{ resident.age }}, {{ resident.gender }})
+              </option>
+            }
+          </select>
+          @if (availableResidents.length === 0) {
+            <p class="help-text" style="margin-top: 0.5rem; color: var(--color-text-muted); font-size: 0.875rem;">
+              No available residents. All residents are already assigned to other households.
+            </p>
+          }
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h2 class="section-title">Additional Household Members</h2>
+        <p class="help-text" style="margin-bottom: 1rem;">Add other family members (sister, brother, father, mother, etc.). Optional.</p>
+        @for (member of additionalMembers; track $index) {
+          <div class="member-row">
+            <div class="form-group member-resident">
+              <label>Resident</label>
+              <select 
+                class="form-control" 
+                [(ngModel)]="member.residentId" 
+                [name]="'memberResident' + $index"
+              >
+                <option value="">Select resident</option>
+                @for (resident of getAvailableResidentsForMember($index); track resident.id) {
+                  <option [value]="resident.id">
+                    {{ resident.residentId }} - {{ resident.name }} ({{ resident.age }}, {{ resident.gender }})
+                  </option>
+                }
+              </select>
+            </div>
+            <div class="form-group member-relationship">
+              <label>Relationship</label>
+              <select 
+                class="form-control" 
+                [(ngModel)]="member.relationship" 
+                [name]="'memberRelationship' + $index"
+              >
+                <option value="">Select relationship</option>
+                @for (rel of RELATIONSHIP_OPTIONS; track rel) {
+                  <option [value]="rel">{{ rel }}</option>
+                }
+              </select>
+            </div>
+            <div class="form-group member-actions">
+              <label>&nbsp;</label>
+              <button type="button" class="btn btn--outline btn--sm" (click)="removeMemberRow($index)" title="Remove member">Remove</button>
+            </div>
+          </div>
+        }
+        <button type="button" class="btn btn--outline btn--sm" (click)="addMemberRow()">+ Add member</button>
+      </div>
+
+      @if (error) {
+        <div class="error-msg">{{ error }}</div>
+      }
+
+      @if (submitted) {
+        <div class="success-msg">Household updated successfully! Redirecting to household details...</div>
+      }
+
+      <div class="form-actions">
+        <button type="button" class="btn btn--outline" (click)="reset()">Reset Form</button>
+        <button type="submit" class="btn btn--primary" [disabled]="submitted || availableResidents.length === 0">Save Changes</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div *ngIf="!household && householdId" class="card">
+  <p>Household not found. <a routerLink="/staff/households">Back to Households</a></p>
+</div>

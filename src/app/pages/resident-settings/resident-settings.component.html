@@ -1,0 +1,285 @@
+<div class="settings-page">
+  <h1 class="page-title">Settings</h1>
+
+  <div class="tabs-wrapper">
+    <nav class="tabs" role="tablist">
+      <button
+        type="button"
+        class="tab-button"
+        [class.active]="activeTab === 'account'"
+        (click)="setActiveTab('account')"
+        role="tab"
+        [attr.aria-selected]="activeTab === 'account'"
+      >
+        Account
+      </button>
+      <button
+        type="button"
+        class="tab-button"
+        [class.active]="activeTab === 'preferences'"
+        (click)="setActiveTab('preferences')"
+        role="tab"
+        [attr.aria-selected]="activeTab === 'preferences'"
+      >
+        Preferences
+      </button>
+      <button
+        type="button"
+        class="tab-button"
+        [class.active]="activeTab === 'privacy'"
+        (click)="setActiveTab('privacy')"
+        role="tab"
+        [attr.aria-selected]="activeTab === 'privacy'"
+      >
+        Privacy
+      </button>
+    </nav>
+  </div>
+
+  <div class="tab-content">
+    <!-- Account Settings Tab -->
+    <div *ngIf="activeTab === 'account'" class="settings-tab">
+      <div class="card">
+        <h2>Account Information</h2>
+        <p class="section-description">Update your account details and change your password.</p>
+
+        <div class="settings-grid">
+          <div class="form-group">
+            <label>Full Name</label>
+            <input
+              type="text"
+              class="form-control"
+              [(ngModel)]="accountSettings.name"
+            />
+          </div>
+
+          <div class="form-group">
+            <label>Email Address</label>
+            <input
+              type="email"
+              class="form-control"
+              [(ngModel)]="accountSettings.email"
+            />
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <h3>Change Password</h3>
+        <div class="settings-grid">
+          <div class="form-group">
+            <label>Current Password</label>
+            <input
+              type="password"
+              class="form-control"
+              [(ngModel)]="accountSettings.currentPassword"
+              placeholder="Enter current password"
+            />
+          </div>
+
+          <div class="form-group">
+            <label>New Password</label>
+            <input
+              type="password"
+              class="form-control"
+              [(ngModel)]="accountSettings.newPassword"
+              placeholder="Enter new password"
+            />
+          </div>
+
+          <div class="form-group">
+            <label>Confirm New Password</label>
+            <input
+              type="password"
+              class="form-control"
+              [(ngModel)]="accountSettings.confirmPassword"
+              placeholder="Confirm new password"
+            />
+          </div>
+        </div>
+
+        <div class="settings-footer">
+          <span class="error-message" *ngIf="error">{{ error }}</span>
+          <span class="success-message" *ngIf="saved && !error">✓ Account updated successfully!</span>
+          <span class="spacer"></span>
+          <button type="button" class="btn btn--primary" (click)="saveAccountSettings()">
+            Save Changes
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Preferences Tab -->
+    <div *ngIf="activeTab === 'preferences'" class="settings-tab">
+      <div class="card">
+        <h2>Notification Preferences</h2>
+        <p class="section-description">Manage how you receive notifications about your requests and updates.</p>
+
+        <div class="settings-section">
+          <div class="settings-grid">
+            <div class="form-group checkbox-group">
+              <label class="checkbox-label">
+                <input
+                  type="checkbox"
+                  [(ngModel)]="preferences.enableNotifications"
+                />
+                <span>Enable Notifications</span>
+              </label>
+            </div>
+
+            <div class="form-group checkbox-group">
+              <label class="checkbox-label">
+                <input
+                  type="checkbox"
+                  [(ngModel)]="preferences.emailNotifications"
+                  [disabled]="!preferences.enableNotifications"
+                />
+                <span>Email Notifications</span>
+              </label>
+            </div>
+
+            <div class="form-group checkbox-group">
+              <label class="checkbox-label">
+                <input
+                  type="checkbox"
+                  [(ngModel)]="preferences.smsNotifications"
+                  [disabled]="!preferences.enableNotifications"
+                />
+                <span>SMS Notifications</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <h3>Request Updates</h3>
+        <div class="settings-section">
+          <div class="settings-grid">
+            <div class="form-group checkbox-group">
+              <label class="checkbox-label">
+                <input
+                  type="checkbox"
+                  [(ngModel)]="preferences.notifyOnRequestStatus"
+                />
+                <span>Notify when request status changes</span>
+              </label>
+            </div>
+
+            <div class="form-group checkbox-group">
+              <label class="checkbox-label">
+                <input
+                  type="checkbox"
+                  [(ngModel)]="preferences.notifyOnRequestApproval"
+                />
+                <span>Notify when request is approved</span>
+              </label>
+            </div>
+
+            <div class="form-group checkbox-group">
+              <label class="checkbox-label">
+                <input
+                  type="checkbox"
+                  [(ngModel)]="preferences.notifyOnRequestRejection"
+                />
+                <span>Notify when request is rejected</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div class="settings-footer">
+          <span class="success-message" *ngIf="saved">✓ Preferences saved successfully!</span>
+          <span class="spacer"></span>
+          <button type="button" class="btn btn--primary" (click)="savePreferences()">
+            Save Changes
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Privacy Tab -->
+    <div *ngIf="activeTab === 'privacy'" class="settings-tab">
+      <div class="card">
+        <h2>Privacy Settings</h2>
+        <p class="section-description">Control your privacy and data sharing preferences.</p>
+
+        <div class="settings-section">
+          <h3>Profile Visibility</h3>
+          <div class="settings-grid">
+            <div class="form-group">
+              <label>Who can view your profile</label>
+              <select class="form-control" [(ngModel)]="privacySettings.profileVisibility">
+                <option value="public">Public (All residents)</option>
+                <option value="barangay">Barangay Staff Only</option>
+                <option value="private">Private (Only Me)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="settings-section">
+          <h3>Data Sharing</h3>
+          <div class="settings-grid">
+            <div class="form-group checkbox-group">
+              <label class="checkbox-label">
+                <input
+                  type="checkbox"
+                  [(ngModel)]="privacySettings.allowDataSharing"
+                />
+                <span>Allow data sharing for barangay services</span>
+              </label>
+            </div>
+
+            <div class="form-group checkbox-group">
+              <label class="checkbox-label">
+                <input
+                  type="checkbox"
+                  [(ngModel)]="privacySettings.showContactInfo"
+                />
+                <span>Show contact information in profile</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="settings-section">
+          <h3>Account Security</h3>
+          <div class="settings-grid">
+            <div class="form-group checkbox-group">
+              <label class="checkbox-label">
+                <input
+                  type="checkbox"
+                  [(ngModel)]="privacySettings.twoFactorAuth"
+                />
+                <span>Enable Two-Factor Authentication</span>
+              </label>
+            </div>
+
+            <div class="form-group checkbox-group">
+              <label class="checkbox-label">
+                <input
+                  type="checkbox"
+                  [(ngModel)]="privacySettings.loginAlerts"
+                />
+                <span>Receive alerts for new login attempts</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div class="settings-footer">
+          <span class="success-message" *ngIf="saved">✓ Privacy settings saved successfully!</span>
+          <span class="spacer"></span>
+          <button type="button" class="btn btn--primary" (click)="savePrivacySettings()">
+            Save Changes
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

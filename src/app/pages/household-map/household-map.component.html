@@ -1,0 +1,207 @@
+<div class="household-map-page">
+  <div class="page-header">
+    <h1 class="page-title">Household Map</h1>
+    <a class="btn btn--outline" [routerLink]="['/staff/households']">
+      Back to List
+    </a>
+  </div>
+
+  <div class="household-map-layout card">
+    <div class="household-map-layout__top">
+      <div class="household-map-layout__info">
+        <p class="household-map-layout__summary">
+          Showing all households with known coordinates in the barangay.
+        </p>
+        <p
+          *ngIf="missingCoordinatesCount > 0"
+          class="household-map-layout__warning"
+        >
+          {{ missingCoordinatesCount }} household{{ missingCoordinatesCount !== 1 ? 's' : '' }}
+          have no coordinates yet and are not shown on the map.
+        </p>
+
+        <div class="household-map-stats">
+          <div class="household-map-stat">
+            <div class="household-map-stat__label">Total households</div>
+            <div class="household-map-stat__value">
+              {{ totalHouseholdsCount }}
+            </div>
+          </div>
+          <div class="household-map-stat">
+            <div class="household-map-stat__label">Mapped on GIS</div>
+            <div class="household-map-stat__value">
+              {{ mappedHouseholdsCount }}
+            </div>
+          </div>
+          <div class="household-map-stat">
+            <div class="household-map-stat__label">Not yet mapped</div>
+            <div class="household-map-stat__value">
+              {{ unmappedHouseholdsCount }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="household-map-filters">
+        <div class="household-map-filters__header">
+          <h3 class="household-map-filters__title">Filters & Search</h3>
+          <button
+            *ngIf="hasActiveFilters"
+            type="button"
+            class="household-map-filters__clear"
+            (click)="clearFilters()"
+          >
+            Clear all
+          </button>
+        </div>
+
+        <div class="household-map-filters__grid">
+          <div class="household-map-filter-group">
+            <label class="household-map-filter-group__label">
+              <span class="household-map-filter-group__icon">🔍</span>
+              Search
+            </label>
+            <div class="household-map-filter-group__input-wrapper">
+              <input
+                type="text"
+                class="form-control household-map-filter-group__input"
+                placeholder="Household ID, head name, or address"
+                [(ngModel)]="searchTerm"
+                (ngModelChange)="onFiltersChanged()"
+              />
+            </div>
+          </div>
+
+          <div class="household-map-filter-group">
+            <label class="household-map-filter-group__label">
+              <span class="household-map-filter-group__icon">📍</span>
+              Purok
+            </label>
+            <select
+              class="form-control household-map-filter-group__input"
+              [(ngModel)]="selectedPurok"
+              (ngModelChange)="onFiltersChanged()"
+            >
+              <option value="">All Puroks</option>
+              <option *ngFor="let p of purokOptions" [value]="p">
+                {{ p }}
+              </option>
+            </select>
+          </div>
+
+          <div class="household-map-filter-group">
+            <label class="household-map-filter-group__label">
+              <span class="household-map-filter-group__icon">📋</span>
+              Status
+            </label>
+            <select
+              class="form-control household-map-filter-group__input"
+              [(ngModel)]="selectedStatusKey"
+              (ngModelChange)="onFiltersChanged()"
+            >
+              <option value="">All Statuses</option>
+              <option *ngFor="let s of statusOptions" [value]="s.key">
+                {{ s.label }}
+              </option>
+            </select>
+          </div>
+
+          <div class="household-map-filter-group">
+            <label class="household-map-filter-group__label">
+              <span class="household-map-filter-group__icon">⚠️</span>
+              Risk Level
+            </label>
+            <select
+              class="form-control household-map-filter-group__input"
+              [(ngModel)]="selectedRiskKey"
+              (ngModelChange)="onFiltersChanged()"
+            >
+              <option value="">All Risk Levels</option>
+              <option *ngFor="let r of riskOptions" [value]="r.key">
+                {{ r.label }}
+              </option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="household-map-layout__body"
+      [class.household-map-layout__body--no-legend]="!hasLegend"
+    >
+      <div class="household-map-legend" *ngIf="hasLegend">
+        <div class="household-map-legend__group" *ngIf="statusLegend.length">
+          <h3 class="household-map-legend__title">By status</h3>
+          <div class="household-map-legend__items">
+            <div
+              class="household-map-legend__item"
+              *ngFor="let item of statusLegend"
+            >
+              <span
+                class="household-map-legend__marker"
+                [ngStyle]="{ 'background-color': item.color }"
+              ></span>
+              <span class="household-map-legend__label">
+                {{ item.label }}
+              </span>
+              <span class="household-map-legend__count">
+                {{ item.count }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="household-map-legend__group" *ngIf="riskLegend.length">
+          <h3 class="household-map-legend__title">By risk level</h3>
+          <div class="household-map-legend__items">
+            <div
+              class="household-map-legend__item"
+              *ngFor="let item of riskLegend"
+            >
+              <span
+                class="household-map-legend__marker household-map-legend__marker--bordered"
+                [ngStyle]="{ borderColor: item.color }"
+              ></span>
+              <span class="household-map-legend__label">
+                {{ item.label }}
+              </span>
+              <span class="household-map-legend__count">
+                {{ item.count }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div
+        id="household-map-container"
+        class="household-map-container"
+        aria-label="Barangay household map"
+      ></div>
+    </div>
+
+    <div
+      class="household-map-missing"
+      *ngIf="missingHouseholds.length"
+    >
+      <h3 class="household-map-missing__title">
+        Households not yet mapped ({{ missingHouseholds.length }})
+      </h3>
+      <ul class="household-map-missing__list">
+        <li
+          class="household-map-missing__item"
+          *ngFor="let h of missingHouseholds"
+        >
+          <span class="household-map-missing__id">
+            {{ h.householdId }}
+          </span>
+          <span class="household-map-missing__address">
+            {{ h.address }} ({{ h.purok }})
+          </span>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+

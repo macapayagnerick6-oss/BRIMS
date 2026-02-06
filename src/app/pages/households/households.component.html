@@ -1,0 +1,58 @@
+<div class="households-list">
+  <div class="page-header">
+    <h1 class="page-title">Households</h1>
+    <a
+      class="btn btn--outline"
+      [routerLink]="['/staff/households/map']"
+    >
+      View Map
+    </a>
+  </div>
+  <div class="filters">
+    <input type="text" class="form-control" placeholder="Search by Household ID or Address" [(ngModel)]="search" />
+    <select class="form-control" [(ngModel)]="purok">
+      <option value="">Purok</option>
+      <option value="Purok 1">Purok 1</option>
+      <option value="Purok 2">Purok 2</option>
+      <option value="Purok 3">Purok 3</option>
+    </select>
+  </div>
+  <div class="table-wrap card">
+    <table class="table">
+      <thead>
+        <tr>
+          <th><input type="checkbox" /></th>
+          <th>Household ID</th>
+          <th>Head of Household</th>
+          <th>Address</th>
+          <th>Purok</th>
+          <th>Members</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (household of filteredHouseholds; track household.id) {
+          <tr>
+            <td><input type="checkbox" /></td>
+            <td><strong>{{ household.householdId }}</strong></td>
+            <td>{{ getHeadOfHousehold(household) }}</td>
+            <td>{{ household.address }}</td>
+            <td>{{ household.purok }}</td>
+            <td>
+              <span class="badge badge--info">{{ household.members.length }} member{{ household.members.length !== 1 ? 's' : '' }}</span>
+            </td>
+            <td>
+              <a [routerLink]="['/staff/households', household.id]" class="btn btn--sm btn--outline">View</a>
+            </td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="7" style="text-align: center; padding: 2rem; color: var(--color-text-muted);">
+              No households found
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>

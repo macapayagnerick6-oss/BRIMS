@@ -1,0 +1,38 @@
+.households-list { width: 100%; }
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  .page-title { margin: 0; font-size: 1.5rem; font-weight: 600; }
+  
+  // Ensure button doesn't overlap theme + bell + profile
+  &:has(.btn--primary) {
+    padding-right: 176px;
+    
+    @media (max-width: 640px) {
+      padding-right: 164px;
+    }
+  }
+  
+  @media (max-width: 640px) {
+    &:has(.btn--primary) {
+      padding-right: 0;
+    }
+  }
+}
+
+.filters {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+  .form-control {
+    padding: 8px 12px;
+    min-width: 140px;
+    &:first-child { min-width: 200px; flex: 1; }
+  }
+}
+
+.table-wrap { overflow-x: auto; padding: 0 !important; }

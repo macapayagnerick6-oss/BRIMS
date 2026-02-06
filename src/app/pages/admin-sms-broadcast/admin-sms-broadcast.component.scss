@@ -1,0 +1,246 @@
+.notifications-page {
+  width: 100%;
+}
+
+.page-header {
+  margin-bottom: 1rem;
+
+  .page-title {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--color-text);
+  }
+}
+
+.tabs-wrapper {
+  margin-bottom: 1.5rem;
+}
+
+.tabs {
+  display: inline-flex;
+  gap: 0;
+  padding: 6px;
+  background: var(--color-bg);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  width: 100%;
+
+  .tab-button {
+    flex: 1;
+    min-width: 0;
+    padding: 12px 24px;
+    background: transparent;
+    border: none;
+    border-radius: calc(var(--radius-lg) - 4px);
+    font-weight: 500;
+    font-size: 0.9375rem;
+    color: var(--color-text-muted);
+    cursor: pointer;
+    transition: color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+    white-space: nowrap;
+
+    &:hover:not(.active) {
+      color: var(--color-text);
+      background: rgba(0, 0, 0, 0.04);
+    }
+
+    &.active {
+      color: white;
+      background: var(--color-primary);
+      box-shadow: 0 2px 8px rgba(37, 99, 235, 0.35);
+    }
+  }
+}
+
+.notifications-broadcast {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 0 1.25rem 1.5rem;
+}
+
+.recipient-toggle {
+  display: flex;
+  justify-content: center;
+  margin: 0 auto 1rem;
+  max-width: 320px;
+  width: 100%;
+  padding: 4px;
+  background: var(--color-bg);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+
+  &__button {
+    min-width: 0;
+    padding: 8px 18px;
+    background: transparent;
+    border: none;
+    border-radius: calc(var(--radius-lg) - 4px);
+    font-weight: 500;
+    font-size: 0.875rem;
+    color: var(--color-text-muted);
+    cursor: pointer;
+    transition: color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+    white-space: nowrap;
+
+    &:hover:not(.active) {
+      color: var(--color-text);
+      background: rgba(0, 0, 0, 0.04);
+    }
+
+    &.active {
+      color: white;
+      background: var(--color-primary);
+      box-shadow: 0 2px 8px rgba(37, 99, 235, 0.35);
+    }
+  }
+}
+
+.sms-broadcast {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 1.5rem 1.25rem;
+}
+
+.sms-broadcast__title {
+  margin: 0 0 0.5rem;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.sms-broadcast__subtitle {
+  margin: 0 0 1.5rem;
+  color: var(--color-text-muted);
+  font-size: 0.95rem;
+}
+
+.email-broadcast__title {
+  margin: 0 0 0.5rem;
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.email-broadcast__subtitle {
+  margin: 0 0 1.5rem;
+  color: var(--color-text-muted);
+  font-size: 0.95rem;
+}
+
+.email-broadcast__form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.sms-broadcast__form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.form-label {
+  font-weight: 500;
+  color: var(--color-text);
+}
+
+.form-input,
+.form-textarea {
+  border-radius: var(--radius);
+  border: 1px solid var(--color-border);
+  padding: 0.5rem 0.75rem;
+  font-size: 0.95rem;
+  background-color: var(--color-bg);
+  color: var(--color-text);
+}
+
+.form-input:focus,
+.form-textarea:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 1px var(--color-primary-soft);
+}
+
+.form-textarea {
+  resize: vertical;
+}
+
+.form-help {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+}
+
+.textarea-with-attachment {
+  position: relative;
+}
+
+.textarea-with-attachment .form-textarea {
+  width: 100%;
+  display: block;
+  padding-right: 2.5rem;
+}
+
+.attachment-button {
+  position: absolute;
+  right: 0.5rem;
+  bottom: 0.5rem;
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  border: none;
+  background: transparent;
+  color: var(--color-text);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.attachment-button:hover:not(:disabled) {
+  background: var(--color-text);
+  color: var(--color-bg);
+}
+
+.link-button {
+  margin-left: 0.5rem;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--color-primary);
+  cursor: pointer;
+  font-size: 0.8rem;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.6rem 1.25rem;
+  border-radius: 999px;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 0.95rem;
+}
+
+.btn--primary {
+  background-color: var(--color-primary);
+  color: white;
+}
+
+.btn--primary:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+

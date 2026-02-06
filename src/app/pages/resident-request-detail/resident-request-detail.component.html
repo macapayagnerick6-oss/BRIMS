@@ -1,0 +1,111 @@
+<div class="resident-request-detail">
+  @if (request) {
+    <div class="card">
+      <div class="request-header">
+        <div class="request-header__title">
+          <h1 class="page-title">Request Details</h1>
+          <span class="request-id">ID: {{ request.id }}</span>
+        </div>
+        <a routerLink="/resident/requests" class="back-button">
+          <span class="back-button__icon">←</span>
+          <span class="back-button__text">Back to Requests</span>
+        </a>
+      </div>
+
+      <div class="request-info">
+        <!-- Status Card -->
+        <div class="status-card" [ngClass]="'status-card--' + request.status.toLowerCase().replace(' ', '-')">
+          <div class="status-card__icon">{{ getStatusIcon(request.status) }}</div>
+          <div class="status-card__content">
+            <div class="status-card__label">Status</div>
+            <div class="status-card__value">
+              <span class="badge" [ngClass]="getStatusBadgeClass(request.status)">
+                {{ request.status }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Request Information -->
+        <div class="info-section">
+          <h2>Request Information</h2>
+          <div class="info-grid">
+            <div class="info-item">
+              <span class="info-label">Request Type</span>
+              <span class="info-value">{{ request.type }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Purpose</span>
+              <span class="info-value">{{ request.purpose }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Date Submitted</span>
+              <span class="info-value">{{ request.date }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Request ID</span>
+              <span class="info-value info-value--mono">{{ request.id }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Status Messages -->
+        @if (request.status === 'Pending') {
+          <div class="status-message status-message--info">
+            <div class="status-message__icon">ℹ️</div>
+            <div class="status-message__content">
+              <h3>Your request is pending</h3>
+              <p>Your request has been submitted and is waiting to be reviewed by barangay staff. You will be notified once it's been processed.</p>
+            </div>
+          </div>
+        }
+
+        @if (request.status === 'For Review') {
+          <div class="status-message status-message--warning">
+            <div class="status-message__icon">👁</div>
+            <div class="status-message__content">
+              <h3>Under review</h3>
+              <p>Your request is currently being reviewed by barangay staff. This process may take a few days. Please check back later for updates.</p>
+            </div>
+          </div>
+        }
+
+        @if (request.status === 'Approved') {
+          <div class="status-message status-message--success">
+            <div class="status-message__icon">✓</div>
+            <div class="status-message__content">
+              <h3>Request approved!</h3>
+              <p>Your request has been approved. You can now download your certificate or visit the barangay office to claim it.</p>
+            </div>
+          </div>
+        }
+
+        <!-- Action Buttons -->
+        <div class="action-section">
+          @if (canDownload()) {
+            <button class="btn btn--success btn--lg">
+              <span class="btn-icon">⬇</span>
+              <span>Download Certificate</span>
+            </button>
+          }
+          <a routerLink="/resident/request-certificate" class="btn btn--primary btn--lg">
+            <span class="btn-icon">+</span>
+            <span>Submit New Request</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  } @else {
+    <div class="card">
+      <div class="error-state">
+        <div class="error-state__icon">❌</div>
+        <h1 class="page-title">Request Not Found</h1>
+        <p class="muted">The request you're looking for doesn't exist or you don't have permission to view it.</p>
+        <a routerLink="/resident/requests" class="back-button">
+          <span class="back-button__icon">←</span>
+          <span class="back-button__text">Back to My Requests</span>
+        </a>
+      </div>
+    </div>
+  }
+</div>

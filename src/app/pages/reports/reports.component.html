@@ -1,0 +1,351 @@
+<div class="reports-page">
+  <h1 class="page-title">Reports & Analytics</h1>
+
+  <div class="tabs-wrapper">
+    <nav class="tabs" role="tablist">
+      <button
+        type="button"
+        class="tab-button"
+        [class.active]="activeTab === 'residents'"
+        (click)="setActiveTab('residents')"
+        role="tab"
+        [attr.aria-selected]="activeTab === 'residents'"
+      >
+        Resident Statistics
+      </button>
+      <button
+        type="button"
+        class="tab-button"
+        [class.active]="activeTab === 'households'"
+        (click)="setActiveTab('households')"
+        role="tab"
+        [attr.aria-selected]="activeTab === 'households'"
+      >
+        Household Statistics
+      </button>
+      <button
+        type="button"
+        class="tab-button"
+        [class.active]="activeTab === 'requests'"
+        (click)="setActiveTab('requests')"
+        role="tab"
+        [attr.aria-selected]="activeTab === 'requests'"
+      >
+        Certificate Requests
+      </button>
+      <button
+        type="button"
+        class="tab-button"
+        [class.active]="activeTab === 'demographics'"
+        (click)="setActiveTab('demographics')"
+        role="tab"
+        [attr.aria-selected]="activeTab === 'demographics'"
+      >
+        Demographics
+      </button>
+    </nav>
+  </div>
+
+  <div class="tab-content">
+    @if (activeTab === 'residents') {
+      <div class="card">
+        <h2>Resident Statistics</h2>
+        @let stats = getResidentStats();
+        
+        <div class="stats-grid">
+          <div class="stat-card stat-card--blue">
+            <span class="stat-label">Total Residents</span>
+            <span class="stat-value">{{ stats.total | number }}</span>
+          </div>
+          <div class="stat-card stat-card--primary">
+            <span class="stat-label">Male</span>
+            <span class="stat-value">{{ stats.male | number }}</span>
+          </div>
+          <div class="stat-card stat-card--success">
+            <span class="stat-label">Female</span>
+            <span class="stat-value">{{ stats.female | number }}</span>
+          </div>
+          <div class="stat-card stat-card--warning">
+            <span class="stat-label">Senior Citizens (60+)</span>
+            <span class="stat-value">{{ stats.senior | number }}</span>
+          </div>
+          <div class="stat-card stat-card--info">
+            <span class="stat-label">Adults (18-59)</span>
+            <span class="stat-value">{{ stats.adult | number }}</span>
+          </div>
+          <div class="stat-card stat-card--info">
+            <span class="stat-label">Minors (<18)</span>
+            <span class="stat-value">{{ stats.minor | number }}</span>
+          </div>
+        </div>
+
+        <div class="charts-grid">
+          <div class="chart-card">
+            <h3 class="chart-title">Residents by Purok (Bar)</h3>
+            <div class="chart-container">
+              <canvas
+                baseChart
+                [type]="'bar'"
+                [data]="residentPurokBarData"
+                [options]="barChartOptions">
+              </canvas>
+            </div>
+          </div>
+
+          <div class="chart-card">
+            <h3 class="chart-title">Age Group Distribution (Line)</h3>
+            <div class="chart-container">
+              <canvas
+                baseChart
+                [type]="'line'"
+                [data]="ageGroupLineData"
+                [options]="lineChartOptions">
+              </canvas>
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <h3>Distribution by Purok</h3>
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Purok</th>
+                <th>Residents</th>
+                <th>Percentage</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (purok of getResidentPuroks(); track purok.name) {
+                <tr>
+                  <td>{{ purok.name }}</td>
+                  <td>{{ purok.count }}</td>
+                  <td>{{ purok.percentage }}%</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    }
+
+    @if (activeTab === 'households') {
+      <div class="card">
+        <h2>Household Statistics</h2>
+        @let stats = getHouseholdStats();
+        
+        <div class="stats-grid">
+          <div class="stat-card stat-card--blue">
+            <span class="stat-label">Total Households</span>
+            <span class="stat-value">{{ stats.total | number }}</span>
+          </div>
+          <div class="stat-card stat-card--primary">
+            <span class="stat-label">Total Members</span>
+            <span class="stat-value">{{ stats.totalMembers | number }}</span>
+          </div>
+          <div class="stat-card stat-card--success">
+            <span class="stat-label">Average Members</span>
+            <span class="stat-value">{{ stats.avgMembers }}</span>
+          </div>
+        </div>
+
+        <div class="charts-grid">
+          <div class="chart-card">
+            <h3 class="chart-title">Households by Purok (Bar)</h3>
+            <div class="chart-container">
+              <canvas
+                baseChart
+                [type]="'bar'"
+                [data]="householdPurokBarData"
+                [options]="barChartOptions">
+              </canvas>
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <h3>Distribution by Purok</h3>
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Purok</th>
+                <th>Households</th>
+                <th>Percentage</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (purok of getHouseholdPuroks(); track purok.name) {
+                <tr>
+                  <td>{{ purok.name }}</td>
+                  <td>{{ purok.count }}</td>
+                  <td>{{ purok.percentage }}%</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    }
+
+    @if (activeTab === 'requests') {
+      <div class="card">
+        <h2>Certificate Request Statistics</h2>
+        @let stats = getRequestStats();
+        
+        <div class="stats-grid">
+          <div class="stat-card stat-card--blue">
+            <span class="stat-label">Total Requests</span>
+            <span class="stat-value">{{ stats.total | number }}</span>
+          </div>
+          <div class="stat-card stat-card--success">
+            <span class="stat-label">Approved</span>
+            <span class="stat-value">{{ stats.approved | number }}</span>
+          </div>
+          <div class="stat-card stat-card--warning">
+            <span class="stat-label">Pending</span>
+            <span class="stat-value">{{ stats.pending | number }}</span>
+          </div>
+          <div class="stat-card stat-card--info">
+            <span class="stat-label">For Review</span>
+            <span class="stat-value">{{ stats.forReview | number }}</span>
+          </div>
+        </div>
+
+        <div class="charts-grid">
+          <div class="chart-card">
+            <h3 class="chart-title">Requests by Certificate Type (Bar)</h3>
+            <div class="chart-container">
+              <canvas
+                baseChart
+                [type]="'bar'"
+                [data]="requestTypeBarData"
+                [options]="barChartOptions">
+              </canvas>
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <h3>Requests by Type</h3>
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Certificate Type</th>
+                <th>Count</th>
+                <th>Percentage</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (type of getRequestTypes(); track type.name) {
+                <tr>
+                  <td>{{ type.name }}</td>
+                  <td>{{ type.count }}</td>
+                  <td>{{ type.percentage }}%</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+
+        <div class="section">
+          <h3>Recent Requests</h3>
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Type</th>
+                <th>Purpose</th>
+                <th>Status</th>
+                <th>Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (req of data.requests; track req.id) {
+                <tr>
+                  <td>{{ req.type }}</td>
+                  <td>{{ req.purpose }}</td>
+                  <td>
+                    <span class="badge" [ngClass]="{
+                      'badge--success': req.status === 'Approved',
+                      'badge--warning': req.status === 'Pending' || req.status === 'For Review'
+                    }">
+                      {{ req.status }}
+                    </span>
+                  </td>
+                  <td>{{ req.date }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    }
+
+    @if (activeTab === 'demographics') {
+      <div class="card">
+        <h2>Demographics Overview</h2>
+        @let residentStats = getResidentStats();
+
+        <div class="section">
+          <h3>Age Group Distribution</h3>
+          <div class="stats-grid">
+            <div class="stat-card stat-card--info">
+              <span class="stat-label">Minors (<18)</span>
+              <span class="stat-value">{{ residentStats.minor | number }}</span>
+              <span class="stat-percentage">{{ (residentStats.minor / residentStats.total * 100).toFixed(1) }}%</span>
+            </div>
+            <div class="stat-card stat-card--primary">
+              <span class="stat-label">Adults (18-59)</span>
+              <span class="stat-value">{{ residentStats.adult | number }}</span>
+              <span class="stat-percentage">{{ (residentStats.adult / residentStats.total * 100).toFixed(1) }}%</span>
+            </div>
+            <div class="stat-card stat-card--warning">
+              <span class="stat-label">Senior Citizens (60+)</span>
+              <span class="stat-value">{{ residentStats.senior | number }}</span>
+              <span class="stat-percentage">{{ (residentStats.senior / residentStats.total * 100).toFixed(1) }}%</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <h3>Gender Distribution</h3>
+          <div class="stats-grid">
+            <div class="stat-card stat-card--primary">
+              <span class="stat-label">Male</span>
+              <span class="stat-value">{{ residentStats.male | number }}</span>
+              <span class="stat-percentage">{{ (residentStats.male / residentStats.total * 100).toFixed(1) }}%</span>
+            </div>
+            <div class="stat-card stat-card--success">
+              <span class="stat-label">Female</span>
+              <span class="stat-value">{{ residentStats.female | number }}</span>
+              <span class="stat-percentage">{{ (residentStats.female / residentStats.total * 100).toFixed(1) }}%</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <h3>Geographic Distribution</h3>
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Purok</th>
+                <th>Residents</th>
+                <th>Households</th>
+                <th>Avg Members/Household</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (purok of getDemographicPuroks(); track purok.name) {
+                <tr>
+                  <td>{{ purok.name }}</td>
+                  <td>{{ purok.residents }}</td>
+                  <td>{{ purok.households }}</td>
+                  <td>{{ purok.avgMembers }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    }
+  </div>
+</div>

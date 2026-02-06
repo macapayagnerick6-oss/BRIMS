@@ -1,0 +1,82 @@
+.household-detail {
+  width: 100%;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  .page-title { margin: 0; font-size: 1.5rem; font-weight: 600; }
+
+  // Ensure back button doesn't overlap theme + bell + profile
+  padding-right: 176px;
+  @media (max-width: 640px) {
+    padding-right: 164px;
+  }
+}
+
+.text-muted {
+  color: var(--color-text-muted);
+}
+
+.household-info {
+  margin-bottom: 1rem;
+  .household-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+    .household-header-left {
+      .household-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin: 0;
+        color: var(--color-text);
+      }
+      .household-subtitle {
+        font-size: 0.9375rem;
+        color: var(--color-text-muted);
+        margin: 0.5rem 0 0;
+      }
+    }
+  }
+  .household-details {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+    .detail-row {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      .detail-label {
+        font-size: 0.875rem;
+        color: var(--color-text-muted);
+        font-weight: 500;
+      }
+      .detail-value {
+        font-size: 0.9375rem;
+        color: var(--color-text);
+      }
+    }
+  }
+}
+
+.household-members {
+  .section-header {
+    margin-bottom: 1rem;
+    .section-title {
+      font-size: 1.125rem;
+      font-weight: 600;
+      margin: 0;
+      color: var(--color-text);
+    }
+  }
+  .table-wrap {
+    overflow-x: auto;
+  }
+}
