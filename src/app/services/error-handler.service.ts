@@ -20,6 +20,9 @@ export interface ErrorContext {
 @Injectable({ providedIn: 'root' })
 export class ErrorHandlerService implements ErrorHandler {
   private notificationService: NotificationService | null = null;
+  private lastErrorKey?: string;
+  private lastErrorTimestamp = 0;
+  private static readonly ERROR_THROTTLE_MS = 3000;
 
   constructor(private injector: Injector) {}
 
@@ -39,6 +42,24 @@ export class ErrorHandlerService implements ErrorHandler {
     // Extract error message
     const errorMessage = this.extractErrorMessage(error);
     const errorTitle = this.extractErrorTitle(error);
+
+    // Throttle identical errors so we don't spam notifications
+    const key = `${errorTitle}|${errorMessage}`;
+    const now = Date.now();
+    if (this.lastErrorKey === key && now - this.lastErrorTimestamp < ErrorHandlerService.ERROR_THROTTLE_MS) {
+      // Still log for debugging, but skip user notification
+      console.warn('Skipping duplicate error within throttle window:', key);
+      return;
+    }
+    this.lastErrorKey = key;
+    this.lastErrorTimestamp = now;
+
+    // Special-case Angular's infinite change detection error: log once, but
+    // avoid surfacing it to users as a repeated notification.
+    if (errorMessage.startsWith('NG0103: Infinite change detection')) {
+      console.warn('Detected Angular infinite change detection error (NG0103). See console for details.', error);
+      return;
+    }
     
     // Log to console for debugging (still useful for developers)
     console.error('Global error handler:', error);

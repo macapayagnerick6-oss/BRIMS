@@ -61,6 +61,19 @@ export class NotificationService {
   /** Internal helper to add a notification */
   private add(input: { type: NotificationType; message: string; title?: string }) {
     const current = this._notifications.value;
+
+    // Avoid spamming duplicates: if the most recent notification
+    // has the same type/title/message, don't add another copy.
+    const last = current[0];
+    if (
+      last &&
+      last.type === input.type &&
+      last.message === input.message &&
+      last.title === input.title
+    ) {
+      return;
+    }
+
     const notification: AppNotification = {
       id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
       type: input.type,

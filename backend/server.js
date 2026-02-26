@@ -8,6 +8,7 @@
 // - TWILIO_FROM_NUMBER
 // - PORT (optional, default 4000)
 // - CORS_ORIGIN (optional, default http://localhost:4200)
+// - API_AUTH_TOKEN (optional, but strongly recommended in non-demo deployments)
 
 const express = require('express');
 const cors = require('cors');
@@ -20,6 +21,7 @@ const app = express();
 
 const PORT = process.env.PORT || 4000;
 const CORS_ORIGIN = process.env.CORS_ORIGIN || 'http://localhost:4200';
+const API_AUTH_TOKEN = process.env.API_AUTH_TOKEN || null;
 
 app.use(
   cors({
@@ -27,6 +29,22 @@ app.use(
   })
 );
 app.use(express.json());
+
+// Simple token-based auth middleware for notification APIs.
+// In production, set API_AUTH_TOKEN in .env and require callers to send:
+//   Authorization: Bearer <API_AUTH_TOKEN>
+// If API_AUTH_TOKEN is not set, auth is effectively disabled (demo mode).
+function requireApiAuth(req, res, next) {
+  if (!API_AUTH_TOKEN) {
+    return next();
+  }
+  const header = req.headers['authorization'] || '';
+  const [scheme, token] = header.split(' ');
+  if (scheme === 'Bearer' && token === API_AUTH_TOKEN) {
+    return next();
+  }
+  return res.status(401).json({ success: false, error: 'Unauthorized' });
+}
 
 // In-memory store for demo notifications
 const notifications = [];
@@ -99,7 +117,7 @@ app.get('/api/health', (req, res) => {
 });
 
 // POST /api/notifications/sms - send one-off SMS
-app.post('/api/notifications/sms', async (req, res) => {
+app.post('/api/notifications/sms', requireApiAuth, async (req, res) => {
   const { to, message } = req.body || {};
 
   if (!to || !message) {
@@ -141,7 +159,7 @@ app.post('/api/notifications/sms', async (req, res) => {
 });
 
 // POST /api/notifications/email - send one-off email
-app.post('/api/notifications/email', async (req, res) => {
+app.post('/api/notifications/email', requireApiAuth, async (req, res) => {
   const { to, subject, message, attachmentName, attachmentContent, attachmentMimeType } = req.body || {};
 
   if (!to || !subject || !message) {
@@ -197,7 +215,7 @@ app.post('/api/notifications/email', async (req, res) => {
 });
 
 // POST /api/notifications/email/bulk - send email to multiple recipients
-app.post('/api/notifications/email/bulk', async (req, res) => {
+app.post('/api/notifications/email/bulk', requireApiAuth, async (req, res) => {
   const { recipients, subject, message, attachmentName, attachmentContent, attachmentMimeType } = req.body || {};
 
   if (!Array.isArray(recipients) || recipients.length === 0 || !subject || !message) {
@@ -260,7 +278,7 @@ app.post('/api/notifications/email/bulk', async (req, res) => {
 });
 
 // POST /api/notifications/sms/bulk - send SMS to multiple recipients
-app.post('/api/notifications/sms/bulk', async (req, res) => {
+app.post('/api/notifications/sms/bulk', requireApiAuth, async (req, res) => {
   const { recipients, message } = req.body || {};
 
   if (!Array.isArray(recipients) || recipients.length === 0 || !message) {
@@ -307,11 +325,9 @@ app.post('/api/notifications/sms/bulk', async (req, res) => {
 });
 
 // GET /api/notifications - list recent notifications
-app.get('/api/notifications', (req, res) => {
+app.get('/api/notifications', requireApiAuth, (req, res) => {
   res.json({ success: true, notifications });
 });
-
-// TODO: Add authentication/role middleware when integrating with real user auth
 
 app.listen(PORT, () => {
   console.log(`BRIMMS backend listening on http://localhost:${PORT}`);

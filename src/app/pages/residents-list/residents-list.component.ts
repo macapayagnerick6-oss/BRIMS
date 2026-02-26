@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { DataService, Resident } from '../../services/data.service';
 import { AuthService } from '../../services/auth.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-residents-list',
@@ -62,12 +63,24 @@ export class ResidentsListComponent {
     return this.auth.currentUser?.role === 'admin';
   }
 
-  archiveResident(resident: Resident): void {
+  async archiveResident(resident: Resident): Promise<void> {
     if (!this.canArchiveResidents) return;
-    const confirmed = confirm(
-      `Archive resident "${resident.name}" (${resident.residentId})? They will move to Archives and be hidden from the main list.`
-    );
-    if (!confirmed) return;
+    const result = await Swal.fire({
+      title: 'Archive resident?',
+      text: `Archive resident "${resident.name}" (${resident.residentId})? They will move to Archives and be hidden from the main list.`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, archive',
+      cancelButtonText: 'Cancel',
+    });
+    if (!result.isConfirmed) return;
     this.data.archiveResident(resident.id, 'Archived by admin from Residents list');
+    await Swal.fire({
+      title: 'Archived',
+      text: 'The resident has been moved to Archives.',
+      icon: 'success',
+      timer: 1500,
+      showConfirmButton: false,
+    });
   }
 }

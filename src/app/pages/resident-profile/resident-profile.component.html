@@ -221,8 +221,8 @@
 </div>
 
 @if (showGenerateCertificate) {
-  <div class="modal-overlay" (click)="closeGenerateCertificate()">
-    <div class="modal card" (click)="$event.stopPropagation()">
+  <div class="modal-overlay generate-cert-overlay" (click)="closeGenerateCertificate()">
+    <div class="modal card generate-cert-modal" (click)="$event.stopPropagation()">
       <div class="modal-header">
         <h2 class="modal-title">Generate Certificate</h2>
         <button type="button" class="modal-close" (click)="closeGenerateCertificate()" aria-label="Close">&times;</button>

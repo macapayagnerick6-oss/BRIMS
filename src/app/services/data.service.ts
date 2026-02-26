@@ -493,10 +493,10 @@ export class DataService {
     const activeResidents = this.getActiveResidents();
     const activeHouseholds = this.getActiveHouseholds();
     const senior = activeResidents.filter((r) => r.age >= 60).length;
-    return { 
-      totalResidents: activeResidents.length, 
-      totalHouseholds: activeHouseholds.length, 
-      seniorCitizens: senior || 245 
+    return {
+      totalResidents: activeResidents.length,
+      totalHouseholds: activeHouseholds.length,
+      seniorCitizens: senior,
     };
   }
 

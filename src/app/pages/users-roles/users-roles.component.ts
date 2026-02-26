@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DataService, SystemUser, Role } from '../../services/data.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-users-roles',
@@ -31,6 +32,8 @@ export class UsersRolesComponent {
   modalDescription = '';
   modalPermissions: string[] = [];
   newPermission = '';
+  isRoleModalClosing = false;
+  private roleModalCloseTimeout: ReturnType<typeof setTimeout> | null = null;
 
   newUser: Partial<SystemUser> & { firstName?: string; middleName?: string; lastName?: string } = {
     firstName: '',
@@ -161,40 +164,97 @@ export class UsersRolesComponent {
     }
   }
 
-  removeUser(user: SystemUser): void {
-    if (!confirm(`Remove user "${user.name}" (${user.email})? This cannot be undone.`)) {
+  async removeUser(user: SystemUser): Promise<void> {
+    const result = await Swal.fire({
+      title: 'Remove user?',
+      text: `Remove user "${user.name}" (${user.email})? This cannot be undone.`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, remove',
+      cancelButtonText: 'Cancel',
+      reverseButtons: true,
+      focusCancel: true,
+    });
+    if (!result.isConfirmed) {
       return;
     }
     this.data.removeUser(user.id);
+    await Swal.fire({
+      title: 'Removed',
+      text: 'The user account has been deleted.',
+      icon: 'success',
+      timer: 1500,
+      showConfirmButton: false,
+    });
   }
 
-  archiveUser(user: SystemUser): void {
+  async archiveUser(user: SystemUser): Promise<void> {
     if (user.role !== 'Admin' && user.role !== 'Staff') {
-      alert('Only Admin and Staff accounts can be archived.');
+      await Swal.fire({
+        icon: 'warning',
+        title: 'Cannot archive user',
+        text: 'Only Admin and Staff accounts can be archived.',
+        confirmButtonText: 'OK',
+      });
       return;
     }
-    if (!confirm(`Archive user "${user.name}" (${user.email})? They will move to Archives and be hidden from this list.`)) {
+
+    const result = await Swal.fire({
+      title: 'Archive user?',
+      text: `Archive user "${user.name}" (${user.email})? They will move to Archives and be hidden from this list.`,
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, archive',
+      cancelButtonText: 'Cancel',
+      reverseButtons: true,
+      focusCancel: true,
+    });
+    if (!result.isConfirmed) {
       return;
     }
+
     this.data.archiveUser(user.id);
+    await Swal.fire({
+      title: 'Archived',
+      text: 'The user has been moved to Archives.',
+      icon: 'success',
+      timer: 1500,
+      showConfirmButton: false,
+    });
   }
 
   // Role modal
   openRoleModal(role: Role, mode: 'role' | 'permissions' = 'role'): void {
+    if (this.roleModalCloseTimeout) {
+      clearTimeout(this.roleModalCloseTimeout);
+      this.roleModalCloseTimeout = null;
+    }
+
     this.activeRole = role;
     this.modalMode = mode;
     this.modalDescription = role.description;
     this.modalPermissions = [...role.permissions];
     this.newPermission = '';
+    this.isRoleModalClosing = false;
     this.showRoleModal = true;
   }
 
   closeRoleModal(): void {
-    this.showRoleModal = false;
-    this.activeRole = null;
-    this.modalDescription = '';
-    this.modalPermissions = [];
-    this.newPermission = '';
+    if (!this.showRoleModal || this.isRoleModalClosing) {
+      return;
+    }
+
+    this.isRoleModalClosing = true;
+
+    this.roleModalCloseTimeout = setTimeout(() => {
+      this.showRoleModal = false;
+      this.isRoleModalClosing = false;
+      this.activeRole = null;
+      this.modalDescription = '';
+      this.modalPermissions = [];
+      this.newPermission = '';
+      this.roleModalCloseTimeout = null;
+    }, 200);
   }
 
   saveRoleModal(): void {

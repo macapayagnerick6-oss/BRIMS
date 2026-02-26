@@ -262,7 +262,7 @@
   flex: 1;
   padding: 1.5rem;
   position: relative;
-  padding-top: calc(72px + 16px); /* extra top space so content doesn’t sit right under theme/bell/profile icons */
+  padding-top: calc(72px + 24px); /* extra top space so content doesn’t sit right under theme/bell/profile icons */
   overflow: auto;
 
   /* Fade-in effect when route content loads */
@@ -271,17 +271,17 @@
   }
 
   @media (max-width: 1023px) {
-    padding-top: calc(72px + 12px);
+    padding-top: calc(72px + 20px);
   }
 
   @media (max-width: 768px) {
     padding: 1rem;
-    padding-top: calc(72px + 12px);
+    padding-top: calc(72px + 20px);
   }
 
   @media (max-width: 640px) {
     padding: 0.75rem;
-    padding-top: calc(68px + 12px);
+    padding-top: calc(68px + 20px);
   }
 }
 
@@ -344,7 +344,7 @@
 
     /* When sidebar is open, push topbar back and blur it */
     &.top-bar--sidebar-open {
-      transform: translateX(280px);
+      transform: none; /* keep top bar fixed; avoid sideways push */
       filter: blur(4px);
       -webkit-filter: blur(4px);
     }
@@ -357,7 +357,7 @@
 
     /* Adjust transform for smaller sidebar width */
     &.top-bar--sidebar-open {
-      transform: translateX(260px);
+      transform: none; /* keep top bar fixed; avoid sideways push */
     }
   }
 }

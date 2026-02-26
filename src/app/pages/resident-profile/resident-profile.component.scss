@@ -282,62 +282,97 @@
 }
 
 // Generate Certificate modal
-.modal-overlay {
+.generate-cert-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: radial-gradient(circle at top, rgba(15, 23, 42, 0.55), rgba(15, 23, 42, 0.9));
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
+  z-index: 1200;
   padding: 1rem;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
 }
 
-.modal {
-  max-width: 440px;
+.generate-cert-modal {
+  max-width: 460px;
   width: 100%;
   max-height: 90vh;
   overflow: auto;
+  background: var(--color-bg-card);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.35);
+  border: 1px solid color-mix(in srgb, var(--color-border) 70%, transparent);
+  transform-origin: center;
+  animation: modal-scale-in 0.16s ease-out;
 }
 
-.modal-header {
+.generate-cert-modal .modal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem 1.25rem;
-  border-bottom: 1px solid var(--color-border);
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.18);
+  background: var(--color-primary);
 }
 
-.modal-title {
+.generate-cert-modal .modal-title {
   margin: 0;
   font-size: 1.25rem;
   font-weight: 600;
-  color: var(--color-text);
+  color: #f9fafb;
 }
 
-.modal-close {
+.generate-cert-modal .modal-close {
   background: none;
   border: none;
   font-size: 1.5rem;
   line-height: 1;
-  color: var(--color-text-muted);
+  color: #e5e7eb;
   cursor: pointer;
   padding: 0.25rem;
   border-radius: var(--radius);
 
   &:hover {
-    color: var(--color-text);
-    background: var(--color-bg);
+    color: #ffffff;
+    background: rgba(15, 23, 42, 0.22);
   }
 }
 
-.modal-body {
-  padding: 1.25rem;
-}
+.generate-cert-modal .modal-body {
+  padding: 1.25rem 1.5rem 1.5rem;
 
-.modal-desc {
+  .form-group {
+    margin-bottom: 1rem;
+
+    label {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-weight: 500;
+      font-size: 0.9rem;
+      color: var(--color-text);
+      margin-bottom: 0.4rem;
+    }
+
+    .form-control {
+      border-radius: 0.6rem;
+      border-color: color-mix(in srgb, var(--color-border) 80%, transparent);
+      transition: box-shadow 0.15s ease, border-color 0.15s ease, background-color 0.15s ease;
+
+      &:focus {
+        border-color: color-mix(in srgb, var(--color-primary) 75%, var(--color-border));
+        box-shadow: 0 0 0 1px color-mix(in srgb, var(--color-primary) 55%, transparent);
+        background-color: color-mix(in srgb, var(--color-bg) 90%, var(--color-primary) 4%);
+      }
+    }
+  }
+}
+.generate-cert-modal .modal-desc {
   margin: 0 0 1rem;
   font-size: 0.9375rem;
+  color: var(--color-text-muted);
 }
 
 .modal-actions {
@@ -345,6 +380,7 @@
   gap: 0.75rem;
   margin-top: 1.25rem;
   flex-wrap: wrap;
+  justify-content: flex-end;
 }
 
 .success-msg {
@@ -360,4 +396,31 @@
   padding: 2rem 1rem;
   margin-top: 2rem;
   border-top: 1px solid var(--color-border);
+}
+
+@keyframes modal-scale-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (max-width: 480px) {
+  .modal {
+    max-width: 100%;
+  }
+
+  .modal-actions {
+    width: 100%;
+    flex-direction: column-reverse;
+
+    .btn {
+      width: 100%;
+      justify-content: center;
+    }
+  }
 }

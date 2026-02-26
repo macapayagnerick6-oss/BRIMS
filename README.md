@@ -15,6 +15,7 @@ BRIMS is a web-based **Barangay Resident Information Management System** built w
 - [Frontend – Angular App](#frontend--angular-app)
 - [Backend – SMS & Email Notifications](#backend--sms--email-notifications-optional-but-recommended)
 - [Tech Stack](#tech-stack)
+- [What's New](#whats-new)
 - [Project Structure](#project-structure)
 - [Database & Firebase](#database--firebase)
 - [Environment Configuration](#environment-configuration)
@@ -28,6 +29,12 @@ BRIMS is a web-based **Barangay Resident Information Management System** built w
 - **Role-based login** – Three roles: **Admin**, **Staff**, and **Resident**
 - **Forgot/Reset password** flows
 - **Route guards** – Protect staff-only and resident-only areas; admin-only routes are restricted to Admin (see [Users and Roles](#users-and-roles)).
+
+### Global In-App Notifications
+- **Notification bell in the top bar** with unread badge count
+- **In-app notification panel** listing recent success, error, warning, and info messages
+- **Mark-as-read and mark-all-as-read** interactions so staff and residents can quickly clear notifications
+- **Context-aware visibility** – hidden on focused/full-screen flows such as login, password reset, settings, QR scanner, household map, and certain detail pages to keep those screens clean
 
 ### Users and Roles
 
@@ -62,7 +69,8 @@ Shared by both Admin and Staff:
 - **Reports**
   - Staff reporting views (population, household, age/sex breakdowns, etc.)
 - **Requests**
-  - View and process certificate and document requests
+  - View and process certificate and document requests from residents
+  - Archive completed or no-longer-needed requests (Admin) so they move to the **Archives** module instead of the main list
   - Request detail views for auditing actions
 - **QR Scanner**
   - Scan resident or request QR codes using device camera
@@ -74,7 +82,7 @@ Shared by both Admin and Staff:
   - Filter by search terms, purok, date ranges, status, and role
   - Restore archived items back to active status
 - **SMS & Email** – SMS broadcast (Twilio) and email broadcast (Nodemailer) to residents
-- **Users & Roles** – Manage user accounts and role assignments (Admin/Staff)
+- **Users & Roles** – Manage user accounts and role assignments (Admin/Staff): create Admin/Staff logins, search and filter by role/status, activate/deactivate accounts, archive Admin/Staff users to the **Archives** module, and edit role descriptions and permissions
 - **Audit Log** – Track key actions for accountability and traceability
 - **Settings** – Staff-side configuration and preferences
 
@@ -172,6 +180,14 @@ The backend will run on `http://localhost:4000` by default. Make sure the Angula
 - **Twilio** – SMS provider
 - **Nodemailer + SMTP** – Email provider
 - **LocalStorage / demo data** – Replace with real database or Firebase (see [FIREBASE_MIGRATION.md](FIREBASE_MIGRATION.md)) for production
+---
+
+## What's New
+
+- **Global notifications center** – Added a top-bar notification bell with an in-app notifications panel, unread badge, and mark-all-as-read behavior, available across staff and resident layouts (but hidden on focused pages like login, settings, QR scanner, and the full-screen household map).
+- **Improved Requests management** – The main Requests table now shows only active (non-archived) requests, and Admins can archive completed or irrelevant requests, which are then managed from the **Archives** section.
+- **Richer Users & Roles management** – Admins can add Admin/Staff accounts with validation, toggle user status, archive Admin/Staff accounts, and maintain role descriptions and permission lists via a dedicated modal.
+- **UI/UX refinements** – Polished layout and responsive behavior for admin pages (including Requests and Users & Roles) to reduce double scrollbars and improve spacing on smaller screens.
 
 ---
 
@@ -186,7 +202,8 @@ src/app/
 │   ├── auth.guard.ts       # Requires logged-in user
 │   └── role.guard.ts       # Role-based access (staff vs resident)
 ├── layouts/
-│   ├── staff-layout/       # Sidebar + topbar for Admin/Staff
+│   ├── admin-layout/       # Admin shell (top bar + sidebar, admin-only sections)
+│   ├── staff-layout/       # Shared staff shell for day‑to‑day operations
 │   └── resident-layout/    # Layout for Resident portal
 ├── pages/
 │   ├── login, forgot-password, reset-password
@@ -201,15 +218,20 @@ src/app/
 │   ├── my-requests, resident-request-detail, resident-reports, resident-settings
 │   └── (each as .ts, .html, .scss)
 ├── services/
-│   ├── auth.service.ts
-│   ├── data.service.ts
-│   ├── database.interface.ts
-│   ├── local-storage-database.service.ts
-│   ├── firebase-database.service.ts
-│   ├── audit-log.service.ts
-│   ├── notification.service.ts, sms.service.ts, email.service.ts
-│   ├── qr-code.service.ts, theme.service.ts
-│   └── notification-type-label.pipe.ts
+│   ├── auth.service.ts                     # Login / current user
+│   ├── data.service.ts                     # Core in‑memory + localStorage data layer
+│   ├── database.interface.ts               # IDatabaseService abstraction
+│   ├── local-storage-database.service.ts   # Local storage implementation
+│   ├── firebase-database.service.ts        # Firebase-ready implementation (optional)
+│   ├── json-server-database.service.ts     # JSON Server integration (optional/demo)
+│   ├── audit-log.service.ts                # Audit trail for key actions
+│   ├── notification.service.ts             # In‑app notifications
+│   ├── notification-type-label.pipe.ts     # Human‑friendly labels for notification types
+│   ├── sms.service.ts, email.service.ts    # SMS / email notification clients
+│   ├── qr-code.service.ts                  # QR generation / helper logic
+│   ├── theme.service.ts                    # Light/dark theme + tokens
+│   ├── certificate-generator.service.ts    # Certificate text/format helpers
+│   └── error-handler.service.ts            # Centralized error handling
 ├── app.component.ts
 ├── app.config.ts
 └── app.routes.ts

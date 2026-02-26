@@ -61,7 +61,8 @@ import { NotificationTypeLabelPipe } from './services/notification-type-label.pi
                         'global-notifications__item--unread': !n.read,
                         'global-notifications__item--type-success': n.type === 'success',
                         'global-notifications__item--type-error': n.type === 'error',
-                        'global-notifications__item--type-warning': n.type === 'warning'
+                        'global-notifications__item--type-warning': n.type === 'warning',
+                        'global-notifications__item--type-info': n.type === 'info'
                       }"
                       (click)="markAsRead(n.id)"
                     >
@@ -175,7 +176,8 @@ import { NotificationTypeLabelPipe } from './services/notification-type-label.pi
         box-shadow: var(--shadow-lg);
         overflow: hidden;
         z-index: 1102;
-        
+        animation: globalNotificationsPanelIn 0.18s ease-out;
+
         @media (max-width: 640px) {
           top: 48px;
           right: -12px;
@@ -184,6 +186,16 @@ import { NotificationTypeLabelPipe } from './services/notification-type-label.pi
         }
       }
 
+      @keyframes globalNotificationsPanelIn {
+        from {
+          opacity: 0;
+          transform: translateY(-4px) scale(0.98);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+      }
 
       .global-notifications__panelHeader {
         display: flex;
@@ -196,6 +208,40 @@ import { NotificationTypeLabelPipe } from './services/notification-type-label.pi
       .global-notifications__panelTitle {
         font-weight: 600;
         color: var(--color-text);
+      }
+
+      .global-notifications__markAll {
+        margin-left: auto;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 12px;
+        border-radius: 9999px;
+        border: 1px solid transparent;
+        background: transparent;
+        color: var(--color-primary, #2563eb);
+        font-size: 0.8125rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition:
+          background-color 0.15s ease,
+          border-color 0.15s ease,
+          color 0.15s ease,
+          transform 0.05s ease;
+      }
+
+      .global-notifications__markAll:hover {
+        background: color-mix(in srgb, var(--color-primary, #2563eb) 8%, transparent);
+        border-color: color-mix(in srgb, var(--color-primary, #2563eb) 35%, transparent);
+      }
+
+      .global-notifications__markAll:active {
+        transform: translateY(1px);
+      }
+
+      .global-notifications__markAll:focus-visible {
+        outline: 2px solid color-mix(in srgb, var(--color-primary, #2563eb) 65%, transparent);
+        outline-offset: 2px;
       }
 
       .global-notifications__close {
@@ -214,12 +260,117 @@ import { NotificationTypeLabelPipe } from './services/notification-type-label.pi
 
       .global-notifications__panelBody {
         padding: 12px 14px;
+        background: linear-gradient(
+          180deg,
+          color-mix(in srgb, var(--color-bg-card) 92%, transparent),
+          color-mix(in srgb, var(--color-bg) 100%, transparent)
+        );
       }
 
       .global-notifications__empty {
-        margin: 0;
+        margin: 8px 0 4px;
         color: var(--color-text-muted);
         font-size: 0.9375rem;
+        text-align: center;
+      }
+
+      .global-notifications__list {
+        list-style: none;
+        margin: 0;
+        padding: 4px 0;
+        max-height: 320px;
+        overflow-y: auto;
+        scrollbar-width: thin;
+      }
+
+      .global-notifications__item {
+        position: relative;
+        padding: 10px 12px 9px 16px;
+        margin-bottom: 6px;
+        border-radius: calc(var(--radius) - 1px);
+        border: 1px solid color-mix(in srgb, var(--color-border) 80%, transparent);
+        border-left-width: 3px;
+        border-left-style: solid;
+        border-left-color: transparent;
+        background: color-mix(in srgb, var(--color-bg-card) 92%, transparent);
+        box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+        cursor: pointer;
+        transition:
+          background 0.16s ease,
+          border-color 0.16s ease,
+          box-shadow 0.16s ease,
+          transform 0.08s ease;
+      }
+
+      .global-notifications__item:hover {
+        background: color-mix(in srgb, var(--color-bg-card) 98%, transparent);
+        box-shadow: 0 3px 10px rgba(15, 23, 42, 0.08);
+        transform: translateY(-1px);
+      }
+
+      .global-notifications__item--unread {
+        background: color-mix(in srgb, var(--color-primary-bg, #eff6ff) 85%, transparent);
+        border-color: color-mix(in srgb, var(--color-primary, #2563eb) 40%, var(--color-border) 60%);
+        box-shadow: 0 4px 14px rgba(37, 99, 235, 0.22);
+      }
+
+      .global-notifications__item--unread::before {
+        content: '';
+        position: absolute;
+        left: 8px;
+        top: 16px;
+        width: 8px;
+        height: 8px;
+        border-radius: 999px;
+        background: var(--color-primary);
+        box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary, #2563eb) 20%, transparent);
+      }
+
+      .global-notifications__itemHeader {
+        display: flex;
+        align-items: baseline;
+        gap: 6px;
+        margin-bottom: 4px;
+      }
+
+      .global-notifications__itemTitle {
+        font-weight: 600;
+        font-size: 0.9rem;
+        color: var(--color-text);
+        flex: 1;
+        min-width: 0;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+      }
+
+      .global-notifications__itemTime {
+        font-size: 0.75rem;
+        color: var(--color-text-muted);
+        flex-shrink: 0;
+      }
+
+      .global-notifications__itemMessage {
+        margin: 0;
+        font-size: 0.85rem;
+        line-height: 1.4;
+        color: var(--color-text-muted);
+      }
+
+      .global-notifications__item--type-success {
+        border-left-color: var(--color-success);
+      }
+
+      .global-notifications__item--type-error {
+        border-left-color: #dc2626;
+      }
+
+      .global-notifications__item--type-warning {
+        border-left-color: var(--color-warning);
+      }
+
+      .global-notifications__item--type-info {
+        border-left-color: var(--color-primary);
       }
 
       .global-notifications__backdrop {
@@ -324,6 +475,8 @@ export class AppComponent implements OnInit, OnDestroy {
       && !url.startsWith('/forgot-password')
       && !url.startsWith('/reset-password')
       && !url.includes('/settings')
+      && !url.includes('/residents/add')
+      && !url.includes('/households/add')
       && !(url.includes('/households/') && url.includes('/edit'))
       && !isResidentProfilePage
       && !isStaffRequestDetailPage

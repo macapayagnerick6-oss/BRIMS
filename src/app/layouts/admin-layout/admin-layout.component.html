@@ -189,7 +189,12 @@
   }
 
   @if (fabLink; as fab) {
-    <a [routerLink]="fab.link" class="fab" [attr.aria-label]="fab.label">
+    <a
+      [routerLink]="fab.link"
+      class="fab"
+      [class.fab--sidebar-open]="isMobileMenuOpen"
+      [attr.aria-label]="fab.label"
+    >
       <span class="fab__icon">+</span>
       <span class="fab__label">{{ fab.label }}</span>
     </a>

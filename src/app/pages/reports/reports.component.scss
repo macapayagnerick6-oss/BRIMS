@@ -60,6 +60,23 @@
   }
 }
 
+@media (max-width: 768px) {
+  .tabs {
+    display: flex;
+    flex-wrap: wrap;
+    overflow-x: visible;
+  }
+
+  .tab-button {
+    flex: 1 1 50%;
+    min-width: 50%;
+    padding: 10px 8px;
+    font-size: 0.85rem;
+    white-space: normal;
+    text-align: center;
+  }
+}
+
 .tab-content {
   min-height: 400px;
 }

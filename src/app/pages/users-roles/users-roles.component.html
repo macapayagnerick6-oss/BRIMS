@@ -269,8 +269,16 @@
   </div>
   
   @if (showRoleModal && activeRole) {
-    <div class="modal-overlay" (click)="closeRoleModal()">
-      <div class="modal card" (click)="$event.stopPropagation()">
+    <div
+      class="modal-overlay"
+      [class.modal-overlay--closing]="isRoleModalClosing"
+      (click)="closeRoleModal()"
+    >
+      <div
+        class="modal card"
+        [class.modal--closing]="isRoleModalClosing"
+        (click)="$event.stopPropagation()"
+      >
         <div class="modal-header">
           <h2 class="modal-title">
             Edit Role – {{ activeRole.name }}
@@ -290,62 +298,87 @@
             Update the description and permissions for this role.
           </p>
 
-          <div class="form-group">
-            <label>Role name</label>
-            <input
-              type="text"
-              class="form-control"
-              [value]="activeRole.name"
-              disabled
-            />
-          </div>
+          <div class="modal-layout">
+            <div class="modal-section">
+              <h3 class="modal-section-title">Role details</h3>
 
-          <div class="form-group">
-            <label>Description</label>
-            <textarea
-              class="form-control"
-              rows="3"
-              [(ngModel)]="modalDescription"
-              name="roleDescription"
-            ></textarea>
-          </div>
+              <div class="form-group">
+                <label>Role name</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  [value]="activeRole.name"
+                  disabled
+                />
+              </div>
 
-          <div class="form-group">
-            <label>Permissions</label>
-            <div class="permissions-tags">
-              @for (perm of modalPermissions; track perm) {
-                <span class="permission-tag">
-                  {{ perm }}
-                  <button
-                    type="button"
-                    class="permission-remove"
-                    (click)="removePermission($index)"
-                  >
-                    ×
-                  </button>
-                </span>
-              } @empty {
-                <p class="muted">No permissions configured yet.</p>
-              }
+              <div class="form-group form-group--description">
+                <label>Description</label>
+                <textarea
+                  class="form-control"
+                  rows="4"
+                  [(ngModel)]="modalDescription"
+                  name="roleDescription"
+                ></textarea>
+              </div>
             </div>
-          </div>
 
-          <div class="form-group permissions-add">
-            <input
-              type="text"
-              class="form-control"
-              placeholder="Enter permission then press Add"
-              [(ngModel)]="newPermission"
-              (keyup.enter)="addPermission()"
-              name="newPermission"
-            />
-            <button
-              type="button"
-              class="btn btn--sm btn--outline"
-              (click)="addPermission()"
-            >
-              Add
-            </button>
+            <div class="modal-section modal-section--permissions">
+              <div class="modal-section-header">
+                <div>
+                  <h3 class="modal-section-title">Permissions</h3>
+                  <p class="modal-section-subtitle muted">
+                    Define what this role is allowed to do in the system.
+                  </p>
+                </div>
+
+                <span
+                  class="badge badge--info"
+                  *ngIf="modalPermissions.length"
+                >
+                  {{ modalPermissions.length }} permission{{
+                    modalPermissions.length !== 1 ? 's' : ''
+                  }}
+                </span>
+              </div>
+
+              <div class="form-group">
+                <div class="permissions-tags permissions-tags--boxed">
+                  @for (perm of modalPermissions; track perm) {
+                    <span class="permission-tag">
+                      {{ perm }}
+                      <button
+                        type="button"
+                        class="permission-remove"
+                        (click)="removePermission($index)"
+                      >
+                        ×
+                      </button>
+                    </span>
+                  } @empty {
+                    <p class="muted">No permissions configured yet.</p>
+                  }
+                </div>
+              </div>
+
+              <div class="form-group permissions-add">
+                <input
+                  type="text"
+                  class="form-control"
+                  placeholder="Enter permission then press Add"
+                  [(ngModel)]="newPermission"
+                  (keyup.enter)="addPermission()"
+                  name="newPermission"
+                />
+                <button
+                  type="button"
+                  class="btn btn--sm btn--outline"
+                  (click)="addPermission()"
+                >
+                  Add
+                </button>
+              </div>
+            </div>
           </div>
 
           <div class="modal-actions">

@@ -567,10 +567,10 @@ a {
   }
 }
 
-/* Notification bell - push back and blur when sidebar is open in mobile view */
+/* Notification bell - keep position fixed; only blur when sidebar is open in mobile view */
 @media (max-width: 1023px) {
   body.sidebar-open .global-notifications {
-    transform: translateX(320px);
+    transform: none; /* avoid sideways push */
     filter: blur(4px);
     -webkit-filter: blur(4px);
   }
@@ -578,7 +578,7 @@ a {
 
 @media (max-width: 640px) {
   body.sidebar-open .global-notifications {
-    transform: translateX(280px);
+    transform: none; /* avoid sideways push */
   }
 }
 

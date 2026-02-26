@@ -325,7 +325,7 @@
 
     /* When sidebar is open, push topbar back and blur it */
     &.top-bar--sidebar-open {
-      transform: translateX(280px);
+      transform: none; /* keep top bar fixed; avoid sideways push */
       filter: blur(4px);
       -webkit-filter: blur(4px);
     }
@@ -338,7 +338,7 @@
 
     /* Adjust transform for smaller sidebar width */
     &.top-bar--sidebar-open {
-      transform: translateX(260px);
+      transform: none; /* keep top bar fixed; avoid sideways push */
     }
   }
 }

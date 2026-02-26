@@ -184,7 +184,14 @@ export class AuthService {
 
   get currentUser(): User | null {
     const raw = sessionStorage.getItem(this.STORAGE_KEY);
-    return raw ? JSON.parse(raw) : null;
+    if (!raw) return null;
+    try {
+      return JSON.parse(raw) as User;
+    } catch {
+      // If stored data is corrupted, clear it to avoid runtime errors.
+      sessionStorage.removeItem(this.STORAGE_KEY);
+      return null;
+    }
   }
 
   get isLoggedIn(): boolean {
