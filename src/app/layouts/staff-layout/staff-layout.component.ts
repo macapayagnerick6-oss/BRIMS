@@ -5,6 +5,7 @@ import { filter } from 'rxjs/operators';
 import { Subscription } from 'rxjs';
 import { AuthService } from '../../services/auth.service';
 import { ThemeService } from '../../services/theme.service';
+import { AlertService } from '../../services/alert.service';
 
 @Component({
   selector: 'app-staff-layout',
@@ -23,7 +24,12 @@ export class StaffLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
   private timeInterval: any;
   private routerSub?: Subscription;
 
-  constructor(public auth: AuthService, public theme: ThemeService, public router: Router) {}
+  constructor(
+    public auth: AuthService,
+    public theme: ThemeService,
+    public router: Router,
+    private alert: AlertService,
+  ) {}
 
   /** FAB shown on list pages; link to add resident or add household */
   get fabLink(): { link: string; label: string } | null {
@@ -125,9 +131,20 @@ export class StaffLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  logout() {
-    this.auth.logout();
-    window.location.href = '/login';
+  async logout() {
+    const result = await this.alert.confirm({
+      title: 'Logout',
+      text: 'Are you sure you want to logout?',
+      confirmButtonText: 'Yes, logout',
+      cancelButtonText: 'Cancel',
+      icon: 'warning',
+    });
+
+    if (result.isConfirmed) {
+      this.auth.logout();
+      this.router.navigate(['/login']);
+      this.alert.success('Logged out', 'You have been logged out.');
+    }
   }
 
   onContentScroll() {
