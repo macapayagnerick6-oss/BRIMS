@@ -1,0 +1,19 @@
+<div class="staff-profile">
+  <h1 class="page-title">My Profile</h1>
+  <div class="profile-card card">
+    <div class="profile-top">
+      <div class="avatar-section">
+        <div class="avatar-lg" [class.avatar-lg--has-photo]="profilePictureUrl">
+          @if (profilePictureUrl) {
+            <img [src]="profilePictureUrl" alt="Profile" class="avatar-lg__img" />
+          }
+        </div>
+      </div>
+      <div class="profile-info">
+        <h2 class="profile-name">{{ displayName }}</h2>
+        <p class="profile-email">{{ auth.currentUser?.email }}</p>
+        <p class="profile-role">{{ auth.currentUser?.role === 'admin' ? 'Administrator' : 'Staff' }}</p>
+      </div>
+    </div>
+  </div>
+</div>

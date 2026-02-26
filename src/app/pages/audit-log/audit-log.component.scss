@@ -1,0 +1,148 @@
+.audit-log-page {
+  width: 100%;
+}
+
+.page-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0 0 0.5rem;
+}
+
+.page-description {
+  color: var(--color-text-muted);
+  font-size: 0.9375rem;
+  margin: 0 0 1.5rem;
+}
+
+.filters {
+  margin-bottom: 1.5rem;
+}
+
+.filters-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+}
+
+.filter-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-text-muted);
+}
+
+.filter-select {
+  padding: 8px 12px;
+  border-radius: var(--radius-md, 8px);
+  border: 1px solid var(--color-border);
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-size: 0.9375rem;
+  min-width: 160px;
+}
+
+.filter-input {
+  padding: 8px 12px;
+  border-radius: var(--radius-md, 8px);
+  border: 1px solid var(--color-border);
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-size: 0.9375rem;
+  min-width: 200px;
+  flex: 1;
+}
+
+.table-card {
+  overflow: hidden;
+}
+
+.table-wrapper {
+  overflow-x: auto;
+}
+
+.empty-message {
+  padding: 2rem;
+  text-align: center;
+  color: var(--color-text-muted);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 640px;
+
+  th,
+  td {
+    padding: 12px 16px;
+    text-align: left;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  th {
+    font-weight: 600;
+    color: var(--color-text-muted);
+    font-size: 0.875rem;
+    background: var(--color-bg);
+  }
+
+  tr:hover td {
+    background: var(--color-bg);
+  }
+}
+
+.col-date {
+  white-space: nowrap;
+  font-size: 0.875rem;
+}
+
+.col-user {
+  max-width: 180px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.col-action {
+  font-weight: 500;
+}
+
+.col-details {
+  max-width: 280px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--color-text-muted);
+  font-size: 0.9375rem;
+}
+
+.badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: capitalize;
+
+  &[data-category='auth'] {
+    background: var(--color-primary-bg, #eef2ff);
+    color: var(--color-primary, #2563eb);
+  }
+  &[data-category='resident'] {
+    background: var(--color-success-bg, #ecfdf5);
+    color: var(--color-success, #059669);
+  }
+  &[data-category='household'] {
+    background: #fef3c7;
+    color: #b45309;
+  }
+  &[data-category='user'] {
+    background: #e0e7ff;
+    color: #4f46e5;
+  }
+  &[data-category='request'] {
+    background: #fce7f3;
+    color: #be185d;
+  }
+  &[data-category='system'] {
+    background: var(--color-bg);
+    color: var(--color-text-muted);
+  }
+}

@@ -1,0 +1,175 @@
+<div class="resident-request-detail">
+  @if (request) {
+    <div class="card">
+      <div class="request-header">
+        <div class="request-header__title">
+          <h1 class="page-title">Request Details</h1>
+          <span class="request-id">ID: {{ request.id }}</span>
+        </div>
+        <a routerLink="/resident/requests" class="back-button">
+          <span class="back-button__icon">←</span>
+          <span class="back-button__text">Back to Requests</span>
+        </a>
+      </div>
+
+      <div class="request-info">
+        <!-- Status Card -->
+        <div class="status-card" [ngClass]="'status-card--' + request.status.toLowerCase().replace(' ', '-')">
+          <div class="status-card__icon">{{ getStatusIcon(request.status) }}</div>
+          <div class="status-card__content">
+            <div class="status-card__label">Status</div>
+            <div class="status-card__value">
+              <span class="badge" [ngClass]="getStatusBadgeClass(request.status)">
+                {{ request.status }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Request Information -->
+        <div class="info-section">
+          <h2>Request Information</h2>
+          <div class="info-grid">
+            <div class="info-item">
+              <span class="info-label">Request Type</span>
+              <span class="info-value">{{ request.type }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Purpose</span>
+              <span class="info-value">{{ request.purpose }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Date Submitted</span>
+              <span class="info-value">{{ request.date }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Request ID</span>
+              <span class="info-value info-value--mono">{{ request.id }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Status Messages -->
+        @if (request.status === 'Pending') {
+          <div class="status-message status-message--info">
+            <div class="status-message__icon">ℹ️</div>
+            <div class="status-message__content">
+              <h3>Your request is pending</h3>
+              <p>Your request has been submitted and is waiting to be reviewed by barangay staff. You will be notified once it's been processed.</p>
+            </div>
+          </div>
+        }
+
+        @if (request.status === 'For Review') {
+          <div class="status-message status-message--warning">
+            <div class="status-message__icon">👁</div>
+            <div class="status-message__content">
+              <h3>Under review</h3>
+              <p>Your request is currently being reviewed by barangay staff. This process may take a few days. Please check back later for updates.</p>
+            </div>
+          </div>
+        }
+
+        @if (request.status === 'Approved') {
+          <div class="status-message status-message--success">
+            <div class="status-message__icon">✓</div>
+            <div class="status-message__content">
+              <h3>Request approved!</h3>
+              <p>Your request has been approved. You can now download your certificate or visit the barangay office to claim it.</p>
+            </div>
+          </div>
+        }
+
+        @if (canDownload()) {
+          <!-- Printable Philippine-style certificate preview -->
+          <section class="certificate-section" aria-label="Certificate preview">
+            <h2 class="certificate-section__title">Printable Certificate</h2>
+            <p class="certificate-section__hint">Review the certificate below, then download it as PDF or PNG for printing.</p>
+
+            <div #certificateRef class="certificate certificate--barangay">
+              <header class="certificate__header">
+                <div class="certificate__republic">Republic of the Philippines</div>
+                <div class="certificate__province">Province of Misamis Oriental</div>
+                <div class="certificate__municipality">Municipality of Villanueva</div>
+                <div class="certificate__barangay">Barangay Name</div>
+                <div class="certificate__line"></div>
+                <div class="certificate__office">OFFICE OF THE PUNONG BARANGAY</div>
+              </header>
+
+              <main class="certificate__body">
+                <h1 class="certificate__title">{{ request.type }}</h1>
+                <p class="certificate__intro">
+                  TO WHOM IT MAY CONCERN:
+                </p>
+
+                <p class="certificate__paragraph">
+                  This is to certify that <span class="certificate__highlight">{{ resident?.name || '____________________' }}</span>,
+                  of legal age, {{ resident?.civilStatus || 'single/married' }}, and a resident of
+                  <span class="certificate__highlight">{{ resident?.address || ('Purok ' + (resident?.purok || '___') + ', Barangay Name, Municipality of Villanueva, Province of Misamis Oriental') }}</span>,
+                  is a bona fide resident of this barangay.
+                </p>
+
+                <p class="certificate__paragraph">
+                  This certification is being issued upon the request of the above-named person
+                  for the purpose of <span class="certificate__highlight">{{ request.purpose || '____________________' }}</span>.
+                </p>
+
+                <p class="certificate__paragraph">
+                  Issued this {{ request.date }} at Barangay Name, Municipality of Villanueva,
+                  Province of Misamis Oriental, Philippines.
+                </p>
+
+                <div class="certificate__footer">
+                  <div class="certificate__control">
+                    <span class="certificate__control-label">Control No.:</span>
+                    <span class="certificate__control-value">{{ request.id }}</span>
+                  </div>
+                  <div class="certificate__signature-block">
+                    <div class="certificate__signature-line"></div>
+                    <div class="certificate__signature-name">Punong Barangay</div>
+                  </div>
+                </div>
+              </main>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-section">
+              <button class="btn btn--success btn--lg" type="button" (click)="downloadCertificate('pdf')">
+                <span class="btn-icon">⬇</span>
+                <span>Download as PDF</span>
+              </button>
+              <button class="btn btn--outline btn--lg" type="button" (click)="downloadCertificate('png')">
+                <span class="btn-icon">🖼</span>
+                <span>Download as PNG</span>
+              </button>
+              <a routerLink="/resident/request-certificate" class="btn btn--primary btn--lg">
+                <span class="btn-icon">+</span>
+                <span>Submit New Request</span>
+              </a>
+            </div>
+          </section>
+        } @else {
+          <!-- Action Buttons -->
+          <div class="action-section">
+            <a routerLink="/resident/request-certificate" class="btn btn--primary btn--lg">
+              <span class="btn-icon">+</span>
+              <span>Submit New Request</span>
+            </a>
+          </div>
+        }
+      </div>
+    </div>
+  } @else {
+    <div class="card">
+      <div class="error-state">
+        <div class="error-state__icon">❌</div>
+        <h1 class="page-title">Request Not Found</h1>
+        <p class="muted">The request you're looking for doesn't exist or you don't have permission to view it.</p>
+        <a routerLink="/resident/requests" class="back-button">
+          <span class="back-button__icon">←</span>
+          <span class="back-button__text">Back to My Requests</span>
+        </a>
+      </div>
+    </div>
+  }
+</div>

@@ -1,0 +1,53 @@
+<div class="email-broadcast">
+  <h1 class="email-broadcast__title">Email Notifications</h1>
+  <p class="email-broadcast__subtitle">
+    Send a one-time email notification to a resident. For demo purposes, this sends directly to an
+    email address. In production, you might select residents from the database instead.
+  </p>
+
+  <form class="email-broadcast__form" (ngSubmit)="send()">
+    <div class="form-field">
+      <label class="form-label" for="email">Recipient email address</label>
+      <input
+        id="email"
+        name="email"
+        class="form-input"
+        type="email"
+        [(ngModel)]="email"
+        placeholder="resident@example.com"
+        [disabled]="isSending"
+      />
+    </div>
+
+    <div class="form-field">
+      <label class="form-label" for="subject">Subject</label>
+      <input
+        id="subject"
+        name="subject"
+        class="form-input"
+        type="text"
+        [(ngModel)]="subject"
+        placeholder="Subject line"
+        [disabled]="isSending"
+      />
+    </div>
+
+    <div class="form-field">
+      <label class="form-label" for="message">Message</label>
+      <textarea
+        id="message"
+        name="message"
+        class="form-textarea"
+        rows="5"
+        [(ngModel)]="message"
+        placeholder="Type your email message here..."
+        [disabled]="isSending"
+      ></textarea>
+    </div>
+
+    <button class="btn btn--primary" type="submit" [disabled]="isSending">
+      {{ isSending ? 'Sending…' : 'Send Email' }}
+    </button>
+  </form>
+</div>
+

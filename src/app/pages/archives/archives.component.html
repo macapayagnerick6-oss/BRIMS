@@ -1,0 +1,335 @@
+<div class="archives-page">
+  <h1 class="page-title">Archives</h1>
+  <p class="page-description">
+    Archived residents, households, certificate requests, and staff accounts. Only Admins can access this section.
+  </p>
+
+  <div class="tabs-wrapper">
+    <nav class="tabs" role="tablist">
+      <button
+        type="button"
+        class="tab-button"
+        [class.active]="activeTab === 'residents'"
+        (click)="setActiveTab('residents')"
+        role="tab"
+        [attr.aria-selected]="activeTab === 'residents'"
+      >
+        Residents
+      </button>
+      <button
+        type="button"
+        class="tab-button"
+        [class.active]="activeTab === 'households'"
+        (click)="setActiveTab('households')"
+        role="tab"
+        [attr.aria-selected]="activeTab === 'households'"
+      >
+        Households
+      </button>
+      <button
+        type="button"
+        class="tab-button"
+        [class.active]="activeTab === 'requests'"
+        (click)="setActiveTab('requests')"
+        role="tab"
+        [attr.aria-selected]="activeTab === 'requests'"
+      >
+        Certificate Requests
+      </button>
+      <button
+        type="button"
+        class="tab-button"
+        [class.active]="activeTab === 'users'"
+        (click)="setActiveTab('users')"
+        role="tab"
+        [attr.aria-selected]="activeTab === 'users'"
+      >
+        Staff Users
+      </button>
+    </nav>
+  </div>
+
+  <div class="tab-content">
+    @if (activeTab === 'residents') {
+      <div class="card">
+        <h2 class="section-title">
+          Archived Residents
+          <span class="section-count">({{ archivedResidents.length }})</span>
+        </h2>
+        <div class="filters-row">
+          <input
+            type="text"
+            class="form-control"
+            placeholder="Search name, ID, or purok"
+            [(ngModel)]="residentSearch"
+          />
+          <select class="form-control" [(ngModel)]="residentPurok">
+            <option value="">All Puroks</option>
+            <option value="Purok 1">Purok 1</option>
+            <option value="Purok 2">Purok 2</option>
+            <option value="Purok 3">Purok 3</option>
+          </select>
+          <label class="filters-row__label">
+            Archived from
+            <input type="date" class="form-control date-control" [(ngModel)]="residentArchivedFrom" />
+          </label>
+          <label class="filters-row__label">
+            to
+            <input type="date" class="form-control date-control" [(ngModel)]="residentArchivedTo" />
+          </label>
+        </div>
+
+        <div class="table-wrap">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Resident ID</th>
+                <th>Name</th>
+                <th>Gender</th>
+                <th>Purok</th>
+                <th>Archived At</th>
+                <th>Reason</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (r of archivedResidents; track r.id) {
+                <tr>
+                  <td>
+                    <a [routerLink]="['/admin/residents', r.id]">{{ r.residentId }}</a>
+                  </td>
+                  <td>{{ r.name }}</td>
+                  <td>{{ r.gender }}</td>
+                  <td>{{ r.purok }}</td>
+                  <td>{{ r.archivedAt ? (r.archivedAt | date:'short') : '—' }}</td>
+                  <td>{{ r.archivedReason || '—' }}</td>
+                  <td>
+                    <button type="button" class="btn btn--sm" (click)="restoreResident(r)">
+                      Restore
+                    </button>
+                  </td>
+                </tr>
+              } @empty {
+                <tr>
+                  <td colspan="7" class="empty-cell">
+                    No archived residents match your filters.
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    }
+
+    @if (activeTab === 'households') {
+      <div class="card">
+        <h2 class="section-title">
+          Archived Households
+          <span class="section-count">({{ archivedHouseholds.length }})</span>
+        </h2>
+        <div class="filters-row">
+          <input
+            type="text"
+            class="form-control"
+            placeholder="Search by Household ID or Address"
+            [(ngModel)]="householdSearch"
+          />
+          <select class="form-control" [(ngModel)]="householdPurok">
+            <option value="">All Puroks</option>
+            <option value="Purok 1">Purok 1</option>
+            <option value="Purok 2">Purok 2</option>
+            <option value="Purok 3">Purok 3</option>
+          </select>
+        </div>
+
+        <div class="table-wrap">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Household ID</th>
+                <th>Address</th>
+                <th>Purok</th>
+                <th>Archived At</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (h of archivedHouseholds; track h.id) {
+                <tr>
+                  <td>{{ h.householdId }}</td>
+                  <td>{{ h.address }}</td>
+                  <td>{{ h.purok }}</td>
+                  <td>{{ h.archivedAt ? (h.archivedAt | date:'short') : '—' }}</td>
+                  <td>
+                    <a [routerLink]="['/admin/households', h.id]" class="btn btn--sm btn--outline">
+                      View
+                    </a>
+                    <button type="button" class="btn btn--sm" (click)="restoreHousehold(h)">
+                      Restore
+                    </button>
+                  </td>
+                </tr>
+              } @empty {
+                <tr>
+                  <td colspan="5" class="empty-cell">
+                    No archived households match your filters.
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    }
+
+    @if (activeTab === 'requests') {
+      <div class="card">
+        <h2 class="section-title">
+          Archived Certificate Requests
+          <span class="section-count">({{ archivedRequests.length }})</span>
+        </h2>
+        <div class="filters-row">
+          <input
+            type="text"
+            class="form-control"
+            placeholder="Search by type, purpose, or resident ID"
+            [(ngModel)]="requestSearch"
+          />
+          <select class="form-control" [(ngModel)]="requestStatus">
+            <option value="">All Statuses</option>
+            <option value="Approved">Approved</option>
+            <option value="Rejected">Rejected</option>
+            <option value="Pending">Pending</option>
+            <option value="For Review">For Review</option>
+          </select>
+          <label class="filters-row__label">
+            Archived from
+            <input type="date" class="form-control date-control" [(ngModel)]="requestArchivedFrom" />
+          </label>
+          <label class="filters-row__label">
+            to
+            <input type="date" class="form-control date-control" [(ngModel)]="requestArchivedTo" />
+          </label>
+        </div>
+
+        <div class="table-wrap">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Type</th>
+                <th>Purpose</th>
+                <th>Status</th>
+                <th>Request Date</th>
+                <th>Archived At</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (r of archivedRequests; track r.id) {
+                <tr>
+                  <td>{{ r.type }}</td>
+                  <td>{{ r.purpose }}</td>
+                  <td>
+                    <span class="status-pill" [attr.data-status]="r.status">
+                      {{ r.status }}
+                    </span>
+                  </td>
+                  <td>{{ r.date }}</td>
+                  <td>{{ r.archivedAt ? (r.archivedAt | date:'short') : '—' }}</td>
+                  <td>
+                    <a [routerLink]="['/admin/requests', r.id]" class="btn btn--sm btn--outline">
+                      View
+                    </a>
+                    <button type="button" class="btn btn--sm" (click)="restoreRequest(r)">
+                      Restore
+                    </button>
+                  </td>
+                </tr>
+              } @empty {
+                <tr>
+                  <td colspan="6" class="empty-cell">
+                    No archived requests match your filters.
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    }
+
+    @if (activeTab === 'users') {
+      <div class="card">
+        <h2 class="section-title">
+          Archived Staff Users
+          <span class="section-count">({{ archivedUsers.length }})</span>
+        </h2>
+        <p class="muted">
+          Former Admin / Staff accounts that have been archived after long inactivity.
+        </p>
+        <div class="filters-row">
+          <input
+            type="text"
+            class="form-control"
+            placeholder="Search by name or email"
+            [(ngModel)]="userSearch"
+          />
+          <select class="form-control" [(ngModel)]="userRole">
+            <option value="">All Roles</option>
+            <option value="Admin">Admin</option>
+            <option value="Staff">Staff</option>
+          </select>
+        </div>
+
+        <div class="table-wrap">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Status</th>
+                <th>Last Login</th>
+                <th>Archived At</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (u of archivedUsers; track u.id) {
+                <tr>
+                  <td>{{ u.name }}</td>
+                  <td>{{ u.email }}</td>
+                  <td>
+                    <span class="role-pill" [attr.data-role]="u.role">
+                      {{ u.role }}
+                    </span>
+                  </td>
+                  <td>
+                    <span class="status-pill" [attr.data-status]="u.status">
+                      {{ u.status }}
+                    </span>
+                  </td>
+                  <td>{{ u.lastLogin || 'Never' }}</td>
+                  <td>{{ u.archivedAt ? (u.archivedAt | date:'short') : '—' }}</td>
+                  <td>
+                    <button type="button" class="btn btn--sm" (click)="restoreUser(u)">
+                      Restore
+                    </button>
+                  </td>
+                </tr>
+              } @empty {
+                <tr>
+                  <td colspan="7" class="empty-cell">
+                    No archived staff users match your filters.
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    }
+  </div>
+</div>
+

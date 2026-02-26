@@ -1,0 +1,107 @@
+.not-found-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: url('/assets/images/BG.jpg') no-repeat center center fixed;
+  background-size: cover;
+  
+  @media (max-width: 640px) {
+    padding: 16px;
+  }
+}
+
+.not-found-card {
+  width: 100%;
+  max-width: 500px;
+  text-align: center;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  animation: errorCardEnter 0.5s ease-out;
+  padding: 3rem 2rem;
+
+  @media (max-width: 640px) {
+    padding: 2rem 1.5rem;
+    border-radius: var(--radius);
+  }
+}
+
+@keyframes errorCardEnter {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.error-icon {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+  color: var(--color-danger, #dc2626);
+  
+  svg {
+    width: 120px;
+    height: 120px;
+    
+    @media (max-width: 640px) {
+      width: 80px;
+      height: 80px;
+    }
+  }
+}
+
+.error-code {
+  font-size: 6rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin: 0 0 0.5rem;
+  line-height: 1;
+  
+  @media (max-width: 640px) {
+    font-size: 4rem;
+  }
+}
+
+.error-title {
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: var(--color-text);
+  margin: 0 0 1rem;
+  
+  @media (max-width: 640px) {
+    font-size: 1.5rem;
+  }
+}
+
+.error-message {
+  font-size: 1rem;
+  color: var(--color-text-muted);
+  margin: 0 0 2rem;
+  line-height: 1.6;
+  
+  @media (max-width: 640px) {
+    font-size: 0.95rem;
+    margin-bottom: 1.5rem;
+  }
+}
+
+.error-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  
+  .btn {
+    min-width: 140px;
+    
+    @media (max-width: 640px) {
+      width: 100%;
+      min-width: auto;
+    }
+  }
+}

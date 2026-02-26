@@ -1,0 +1,66 @@
+<div class="audit-log-page">
+  <h1 class="page-title">Audit Log</h1>
+  <p class="page-description">View system activity: logins, data changes, and user actions.</p>
+
+  <div class="filters card">
+    <div class="filters-row">
+      <label class="filter-label" for="category">Category</label>
+      <select
+        id="category"
+        class="filter-select"
+        [value]="categoryFilter()"
+        (change)="onCategoryChange($any($event.target).value)"
+      >
+        @for (cat of categories; track cat.value) {
+          <option [value]="cat.value">{{ cat.label }}</option>
+        }
+      </select>
+      <label class="filter-label" for="search">Search</label>
+      <input
+        id="search"
+        type="text"
+        class="filter-input"
+        placeholder="Action, user, details..."
+        [value]="searchText()"
+        (input)="onSearchInput($any($event.target).value)"
+      />
+    </div>
+  </div>
+
+  <div class="card table-card">
+    <div class="table-wrapper">
+      @if (filteredLogs().length === 0) {
+        <p class="empty-message">No audit log entries match your filters.</p>
+      } @else {
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Date & Time</th>
+              <th>User</th>
+              <th>Category</th>
+              <th>Action</th>
+              <th>Details</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (entry of filteredLogs(); track entry.id) {
+              <tr>
+                <td class="col-date">{{ formatDate(entry.timestamp) }}</td>
+                <td class="col-user">
+                  {{ entry.userName || entry.userEmail || '—' }}
+                </td>
+                <td>
+                  <span class="badge" [attr.data-category]="entry.category">
+                    {{ categoryLabel(entry.category) }}
+                  </span>
+                </td>
+                <td class="col-action">{{ entry.action }}</td>
+                <td class="col-details">{{ entry.details || entry.entityName || '—' }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      }
+    </div>
+  </div>
+</div>

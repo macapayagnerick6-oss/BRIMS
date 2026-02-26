@@ -1,0 +1,136 @@
+<div class="my-requests">
+  <div class="page-header">
+    <h1 class="page-title">My Requests</h1>
+  </div>
+
+  <!-- Statistics Cards -->
+  <div class="stats-grid">
+    <div class="stat-card stat-card--total">
+      <div class="stat-card__icon">📋</div>
+      <div class="stat-card__content">
+        <div class="stat-card__value">{{ stats().total }}</div>
+        <div class="stat-card__label">Total Requests</div>
+      </div>
+    </div>
+    <div class="stat-card stat-card--approved">
+      <div class="stat-card__icon">✓</div>
+      <div class="stat-card__content">
+        <div class="stat-card__value">{{ stats().approved }}</div>
+        <div class="stat-card__label">Approved</div>
+      </div>
+    </div>
+    <div class="stat-card stat-card--pending">
+      <div class="stat-card__icon">⏳</div>
+      <div class="stat-card__content">
+        <div class="stat-card__value">{{ stats().pending }}</div>
+        <div class="stat-card__label">Pending</div>
+      </div>
+    </div>
+    <div class="stat-card stat-card--review">
+      <div class="stat-card__icon">👁</div>
+      <div class="stat-card__content">
+        <div class="stat-card__value">{{ stats().forReview }}</div>
+        <div class="stat-card__label">For Review</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filters and Search -->
+  <div class="filters-section card">
+    <div class="filters-row">
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input
+          type="text"
+          class="form-control"
+          placeholder="Search by type, purpose, or ID..."
+          [value]="searchQuery()"
+          (input)="onSearchChange($event)"
+        />
+      </div>
+      
+      <div class="filter-group">
+        <label class="filter-label">Status:</label>
+        <select
+          class="form-control form-control--sm"
+          [value]="statusFilter()"
+          (change)="setStatusFilter($any($event.target).value)"
+        >
+          <option value="all">All</option>
+          <option value="Pending">Pending</option>
+          <option value="For Review">For Review</option>
+          <option value="Approved">Approved</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label class="filter-label">Sort by:</label>
+        <div class="sort-buttons">
+          <button
+            class="sort-btn"
+            [class.sort-btn--active]="sortBy() === 'date'"
+            (click)="setSort('date')"
+          >
+            Date {{ sortBy() === 'date' ? (sortOrder() === 'asc' ? '↑' : '↓') : '' }}
+          </button>
+          <button
+            class="sort-btn"
+            [class.sort-btn--active]="sortBy() === 'type'"
+            (click)="setSort('type')"
+          >
+            Type {{ sortBy() === 'type' ? (sortOrder() === 'asc' ? '↑' : '↓') : '' }}
+          </button>
+          <button
+            class="sort-btn"
+            [class.sort-btn--active]="sortBy() === 'status'"
+            (click)="setSort('status')"
+          >
+            Status {{ sortBy() === 'status' ? (sortOrder() === 'asc' ? '↑' : '↓') : '' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Requests List -->
+  <div class="requests-list card">
+    @if (filteredRequests().length > 0) {
+      @for (r of filteredRequests(); track r.id) {
+        <a [routerLink]="['/resident/requests', r.id]" class="request-card">
+          <div class="request-card__icon">{{ getStatusIcon(r.status) }}</div>
+          <div class="request-card__content">
+            <div class="request-card__header">
+              <h3 class="request-card__type">{{ r.type }}</h3>
+              <span class="badge" [ngClass]="getStatusBadgeClass(r.status)">
+                {{ r.status }}
+              </span>
+            </div>
+            <p class="request-card__purpose">{{ r.purpose }}</p>
+            <div class="request-card__meta">
+              <span class="request-card__id">ID: {{ r.id }}</span>
+              <span class="request-card__date">📅 {{ r.date }}</span>
+            </div>
+          </div>
+          <div class="request-card__arrow">→</div>
+        </a>
+      }
+    } @else {
+      <div class="empty-state">
+        <div class="empty-state__icon">📭</div>
+        <h3 class="empty-state__title">No requests found</h3>
+        <p class="empty-state__message">
+          @if (searchQuery() || statusFilter() !== 'all') {
+            Try adjusting your filters or search query.
+          } @else {
+            You haven't submitted any requests yet.
+          }
+        </p>
+        @if (!searchQuery() && statusFilter() === 'all') {
+          <a routerLink="/resident/request-certificate" class="btn btn--primary">
+            Submit Your First Request
+          </a>
+        }
+      </div>
+    }
+  </div>
+</div>

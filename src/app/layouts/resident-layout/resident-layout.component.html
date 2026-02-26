@@ -1,0 +1,170 @@
+<div class="resident-layout">
+  @if (!isMobileMenuOpen) {
+    <button 
+      class="mobile-menu-toggle" 
+      (click)="toggleMobileMenu()"
+      [attr.aria-label]="'Toggle menu'"
+      [attr.aria-expanded]="isMobileMenuOpen"
+      type="button"
+    >
+      <span class="mobile-menu-icon">☰</span>
+    </button>
+  }
+  
+  @if (isMobileMenuOpen) {
+    <div class="sidebar-backdrop" (click)="closeMobileMenu()"></div>
+  }
+  
+  <aside class="sidebar" [class.sidebar--open]="isMobileMenuOpen">
+    <div class="sidebar-header">
+      <img class="logo" src="/assets/images/FOR-DASHBOARD.png" alt="Logo" />
+      <button 
+        class="sidebar-close" 
+        (click)="closeMobileMenu()"
+        [attr.aria-label]="'Close menu'"
+        type="button"
+      >
+        ✕
+      </button>
+    </div>
+    <nav class="sidebar-nav">
+      @for (item of navItems; track item.path) {
+        <a
+          [routerLink]="item.path"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: item.path === '/resident/dashboard' }"
+          class="nav-item"
+          (click)="closeMobileMenu()"
+        >
+          <span class="nav-icon">
+            @switch (item.icon) {
+              @case ('dashboard') {
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true">
+                  <rect x="4" y="4" width="7" height="7" rx="1" />
+                  <rect x="13" y="4" width="7" height="7" rx="1" />
+                  <rect x="4" y="13" width="7" height="7" rx="1" />
+                  <rect x="13" y="13" width="7" height="7" rx="1" />
+                </svg>
+              }
+              @case ('profile') {
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <circle cx="12" cy="8" r="3.5" />
+                  <path d="M6 18c0-2.5 2.2-4.5 6-4.5s6 2 6 4.5" />
+                </svg>
+              }
+              @case ('certificate') {
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <rect x="6" y="4" width="12" height="16" rx="1.5" />
+                  <path d="M9 8h6M9 11h5" />
+                  <path d="M11 15.5 12 17l1-1.5 1 1-1 2.5-1-1-1 1-1-2.5z" />
+                </svg>
+              }
+              @case ('reports') {
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M6 18v-6M11 18V8M16 18v-9" />
+                </svg>
+              }
+              @case ('requests') {
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <rect x="6" y="4" width="12" height="16" rx="1.5" />
+                  <path d="M9 9h6M9 13h4" />
+                </svg>
+              }
+              @default {
+                <span aria-hidden="true">•</span>
+              }
+            }
+          </span>
+          <span>{{ item.label }}</span>
+        </a>
+      }
+    </nav>
+    <div class="sidebar-footer">
+      <div class="time-display">
+        <div class="time-display__time">{{ currentTime | date:'h:mm:ss a' }}</div>
+        <div class="time-display__date">{{ currentTime | date:'EEEE, MMMM d, y' }}</div>
+      </div>
+    </div>
+  </aside>
+  <div class="main">
+    <main class="content" #contentScroll (scroll)="onContentScroll()">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+
+  @if (showTopRightUi) {
+    <header class="top-bar" [class.top-bar--sidebar-open]="isMobileMenuOpen" aria-label="Top bar">
+      <h1 class="top-bar__title">Barangay Resident Information System</h1>
+      <button
+        type="button"
+        class="theme-toggle"
+        [attr.aria-label]="theme.isDark() ? 'Switch to light mode' : 'Switch to dark mode'"
+        (click)="theme.toggleTheme()"
+      >
+        @if (theme.isDark()) {
+          <svg class="theme-toggle__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <circle cx="12" cy="12" r="5"/>
+            <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+          </svg>
+        } @else {
+          <svg class="theme-toggle__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+          </svg>
+        }
+      </button>
+      <div class="top-bar__bell-slot" aria-hidden="true"></div>
+      <div class="profile-menu" #profileMenu>
+        <button
+          type="button"
+          class="profile-menu__trigger"
+          [attr.aria-label]="'Profile menu'"
+          [attr.aria-expanded]="isProfileMenuOpen"
+          (click)="toggleProfileMenu()"
+        >
+          @if (auth.profilePicture$ | async; as profilePic) {
+            <img [src]="profilePic" alt="" class="profile-menu__avatar" />
+          } @else {
+            <img src="/assets/images/default-avatar.png" alt="" class="profile-menu__avatar" />
+          }
+        </button>
+        @if (isProfileMenuOpen) {
+          <div class="profile-menu__dropdown">
+            <a [routerLink]="['/resident/profile']" class="profile-menu__item" (click)="closeProfileMenu()">
+              <span class="profile-menu__item-icon">👤</span>
+              My Profile
+            </a>
+            <a [routerLink]="['/resident/settings']" class="profile-menu__item" (click)="closeProfileMenu()">
+              <span class="profile-menu__item-icon">⚙</span>
+              Settings
+            </a>
+            <button type="button" class="profile-menu__item profile-menu__item--logout" (click)="logout(); closeProfileMenu()">
+              <span class="profile-menu__item-icon">⎋</span>
+              Logout
+            </button>
+          </div>
+        }
+      </div>
+    </header>
+  }
+
+  @if (fabLink; as fab) {
+    <a [routerLink]="fab.link" class="fab" [attr.aria-label]="fab.label">
+      <span class="fab__icon">+</span>
+      <span class="fab__label">{{ fab.label }}</span>
+    </a>
+  }
+
+  @if (showBackToTop) {
+    <button
+      type="button"
+      class="back-to-top"
+      [class.back-to-top--above-fab]="!!fabLink"
+      (click)="scrollToTop()"
+      aria-label="Back to top"
+    >
+      <svg class="back-to-top__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <path d="M18 15l-6-6-6 6"/>
+      </svg>
+    </button>
+  }
+</div>
