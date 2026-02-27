@@ -85,6 +85,14 @@
       "status": "Approved",
       "date": "Mar 24, 2034",
       "residentId": "BRGY-1004"
+    },
+    {
+      "id": "4",
+      "type": "Barangay Clearance",
+      "purpose": "Tomorrow",
+      "status": "Approved",
+      "date": "Feb 27, 2026",
+      "residentId": "BRGY-1001"
     }
   ],
   "households": [
@@ -181,7 +189,7 @@
       "id": "1",
       "name": "Staff User",
       "email": "staff@barangay.gov",
-      "role": "Resident",
+      "role": "Staff",
       "status": "Active",
       "lastLogin": "Jan 29, 2026",
       "createdAt": "Jan 1, 2025"
@@ -272,7 +280,7 @@
         "Process Requests",
         "QR Scanner"
       ],
-      "userCount": 0
+      "userCount": 1
     },
     {
       "id": "3",
@@ -285,7 +293,7 @@
         "View Resident Reports",
         "Update Profile & Settings"
       ],
-      "userCount": 6
+      "userCount": 5
     }
   ]
 }

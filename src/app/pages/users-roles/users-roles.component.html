@@ -175,9 +175,9 @@
                 <td>{{ user.email }}</td>
                 <td>
                   <select 
-                    class="role-select" 
-                    [value]="user.role"
-                    (change)="updateUserRole(user.id, $any($event.target).value)"
+                    class="role-select"
+                    [(ngModel)]="user.role"
+                    (ngModelChange)="updateUserRole(user.id, $event)"
                   >
                     @for (role of roles; track role.id) {
                       <option [value]="role.name">{{ role.name }}</option>
@@ -200,14 +200,6 @@
                       (click)="toggleUserStatus(user.id)"
                     >
                       {{ user.status === 'Active' ? 'Deactivate' : 'Activate' }}
-                    </button>
-                    <button 
-                      type="button" 
-                      class="btn btn--sm btn--danger"
-                      (click)="removeUser(user)"
-                      title="Remove user"
-                    >
-                      Remove
                     </button>
                     <button
                       type="button"

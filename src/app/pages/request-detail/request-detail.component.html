@@ -89,6 +89,80 @@
             </div>
           </div>
         }
+
+        @if (canDownload()) {
+          <!-- Printable certificate preview for approved requests -->
+          <section class="certificate-section" aria-label="Certificate preview">
+            <h2 class="certificate-section__title">Printable Certificate</h2>
+            <p class="certificate-section__hint">
+              Review the certificate below, then download it as PDF or PNG for printing.
+            </p>
+
+            <div #certificateRef class="certificate certificate--barangay">
+              <header class="certificate__header">
+                <div class="certificate__republic">Republic of the Philippines</div>
+                <div class="certificate__province">Province of Misamis Oriental</div>
+                <div class="certificate__municipality">Municipality of Villanueva</div>
+                <div class="certificate__barangay">Barangay Name</div>
+                <div class="certificate__line"></div>
+                <div class="certificate__office">OFFICE OF THE PUNONG BARANGAY</div>
+              </header>
+
+              <main class="certificate__body">
+                <h1 class="certificate__title">{{ request.type }}</h1>
+                <p class="certificate__intro">
+                  TO WHOM IT MAY CONCERN:
+                </p>
+
+                <p class="certificate__paragraph">
+                  This is to certify that
+                  <span class="certificate__highlight">{{ requester?.name || '____________________' }}</span>,
+                  of legal age, {{ requester?.civilStatus || 'single/married' }}, and a resident of
+                  <span class="certificate__highlight">
+                    {{
+                      requester?.address
+                        || ('Purok ' + (requester?.purok || '___') + ', Barangay Name, Municipality of Villanueva, Province of Misamis Oriental')
+                    }}
+                  </span>,
+                  is a bona fide resident of this barangay.
+                </p>
+
+                <p class="certificate__paragraph">
+                  This certification is being issued upon the request of the above-named person
+                  for the purpose of
+                  <span class="certificate__highlight">{{ request.purpose || '____________________' }}</span>.
+                </p>
+
+                <p class="certificate__paragraph">
+                  Issued this {{ request.date }} at Barangay Name, Municipality of Villanueva,
+                  Province of Misamis Oriental, Philippines.
+                </p>
+
+                <div class="certificate__footer">
+                  <div class="certificate__control">
+                    <span class="certificate__control-label">Control No.:</span>
+                    <span class="certificate__control-value">{{ request.id }}</span>
+                  </div>
+                  <div class="certificate__signature-block">
+                    <div class="certificate__signature-line"></div>
+                    <div class="certificate__signature-name">Punong Barangay</div>
+                  </div>
+                </div>
+              </main>
+            </div>
+
+            <div class="certificate-actions">
+              <button class="btn btn--success btn--lg" type="button" (click)="downloadCertificate('pdf')">
+                <span class="btn-icon">⬇</span>
+                <span>Download as PDF</span>
+              </button>
+              <button class="btn btn--outline btn--lg" type="button" (click)="downloadCertificate('png')">
+                <span class="btn-icon">🖼</span>
+                <span>Download as PNG</span>
+              </button>
+            </div>
+          </section>
+        }
       </div>
     </div>
   } @else {

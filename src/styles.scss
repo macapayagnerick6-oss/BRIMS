@@ -282,6 +282,63 @@ a {
   }
 }
 
+/* SweetAlert2 - match BRIMS look & feel */
+.swal2-popup {
+  border-radius: var(--radius-lg);
+  background: var(--color-bg-card);
+  color: var(--color-text);
+  box-shadow: var(--shadow-lg);
+  padding: 1.5rem 1.75rem;
+}
+
+.swal2-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.swal2-html-container {
+  font-size: 0.9375rem;
+  color: var(--color-text-muted);
+}
+
+.swal2-actions {
+  margin-top: 1.25rem;
+  gap: 0.5rem;
+}
+
+.swal2-styled {
+  border-radius: var(--radius);
+  padding: 0.6rem 1.4rem;
+  font-weight: 500;
+  font-size: 0.9375rem;
+  box-shadow: none;
+}
+
+.swal2-styled:focus {
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+}
+
+.swal2-styled.swal2-confirm {
+  background: var(--color-primary);
+  color: #ffffff;
+}
+
+.swal2-styled.swal2-confirm:hover {
+  background: var(--color-primary-dark);
+}
+
+.swal2-styled.swal2-cancel {
+  background: transparent;
+  color: var(--color-text-muted);
+  border: 1px solid var(--color-border);
+}
+
+.swal2-styled.swal2-cancel:hover {
+  background: var(--color-bg-secondary);
+  color: var(--color-text);
+}
+
 .form-group {
   margin-bottom: 1rem;
   label {

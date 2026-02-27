@@ -8,7 +8,6 @@ export class AlertService {
       icon: 'success',
       title,
       text,
-      confirmButtonColor: '#16a34a',
     });
   }
 
@@ -17,7 +16,6 @@ export class AlertService {
       icon: 'error',
       title,
       text,
-      confirmButtonColor: '#dc2626',
     });
   }
 

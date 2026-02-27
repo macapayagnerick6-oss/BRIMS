@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { DataService, CertificateRequest, Resident } from '../../services/data.service';
 import { QrCodeService } from '../../services/qr-code.service';
+import { CertificateGeneratorService } from '../../services/certificate-generator.service';
 
 @Component({
   selector: 'app-request-detail',
@@ -18,10 +19,13 @@ export class RequestDetailComponent implements OnInit {
   showQRCode = false;
   isUpdating = false;
 
+  @ViewChild('certificateRef') certificateRef?: ElementRef<HTMLDivElement>;
+
   constructor(
     private route: ActivatedRoute,
     private data: DataService,
     private qrCodeService: QrCodeService,
+    private certificateGenerator: CertificateGeneratorService,
   ) {
     // Initialize on first load
     const id = this.route.snapshot.paramMap.get('id');
@@ -106,5 +110,17 @@ export class RequestDetailComponent implements OnInit {
     this.data.updateRequest(id, { status: 'Rejected' });
     this.request = { ...this.request, status: 'Rejected' };
     this.isUpdating = false;
+  }
+
+  canDownload(): boolean {
+    return this.request?.status === 'Approved';
+  }
+
+  async downloadCertificate(format: 'pdf' | 'png'): Promise<void> {
+    if (!this.canDownload()) return;
+    const ref = this.certificateRef?.nativeElement;
+    if (!ref) return;
+    const fileName = `certificate-${this.request?.id || 'barangay'}`;
+    await this.certificateGenerator.export(ref, fileName, format);
   }
 }

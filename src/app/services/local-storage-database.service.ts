@@ -17,6 +17,8 @@ const STORAGE_KEYS = {
   providedIn: 'root'
 })
 export class LocalStorageDatabaseService implements IDatabaseService {
+  // Demo/offline implementation using browser localStorage.
+  // Data seeded here is for local testing only and may differ from the JSON Server data in server/db.json.
   private notificationService = inject(NotificationService);
   
   // Initialize with default data if storage is empty

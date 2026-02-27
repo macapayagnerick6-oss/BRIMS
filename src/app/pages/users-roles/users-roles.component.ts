@@ -19,8 +19,13 @@ export class UsersRolesComponent {
   roleFilter = '';
   statusFilter = '';
 
-  users = this.data.users;
-  roles = this.data.roles;
+  get users(): SystemUser[] {
+    return this.data.getActiveUsers();
+  }
+
+  get roles(): Role[] {
+    return this.data.roles;
+  }
 
   showAddUserForm = false;
   addUserError = '';
