@@ -12,16 +12,18 @@
   z-index: 1000;
   width: 44px;
   height: 44px;
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--sidebar-border);
   border-radius: var(--radius);
-  background: var(--color-bg-card);
+  background: var(--sidebar-bg);
+  color: var(--sidebar-text);
   box-shadow: var(--shadow);
   cursor: pointer;
   align-items: center;
   justify-content: center;
   transition: background 0.2s;
 
-  @media (max-width: 1023px) {
+  /* Laptop + mobile: drawer (hamburger to open) */
+  @media (max-width: 1439px) {
     display: flex;
   }
 
@@ -38,13 +40,11 @@
 .sidebar-backdrop {
   display: none;
 
-  @media (max-width: 1023px) {
+  @media (max-width: 1439px) {
     display: block;
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.4);
-    backdrop-filter: blur(4px);
-    -webkit-backdrop-filter: blur(4px);
+    background: rgba(0, 0, 0, 0.45); /* keep dim overlay but no blur */
     z-index: 998;
     animation: fadeIn 0.2s ease-out;
   }
@@ -57,64 +57,67 @@
 
 .sidebar {
   width: 280px;
+  min-width: 0; /* allow flex child to shrink on narrow screens */
   background: var(--sidebar-bg);
   color: var(--sidebar-text);
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
   height: 100vh;
+  min-height: 0; /* allows flex children to shrink; nav items auto-fit via flex distribution */
   position: sticky;
   top: 0;
   transition: transform 0.3s ease-out;
 
-  @media (max-width: 1023px) {
+  /* Laptop + mobile: drawer overlay */
+  @media (max-width: 1439px) {
     position: fixed;
     top: 0;
     left: 0;
     bottom: 0;
-    z-index: 1001; /* keep sidebar above top bar during open/close animation */
+    z-index: 1001;
     transform: translateX(-100%);
     box-shadow: var(--shadow-lg);
 
     &.sidebar--open {
       transform: translateX(0);
-      /* base z-index already above top bar */
     }
   }
 
   @media (max-width: 640px) {
-    width: 260px;
+    width: min(290px, 85vw);
   }
 }
 
 .sidebar-header {
-  padding: 1.5rem 1rem;
+  padding: clamp(0.75rem, 2vh, 1.5rem) clamp(0.5rem, 1.5vw, 1rem);
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
+  flex-shrink: 0;
 
   .logo {
-    width: 200px;
-    height: 200px;
+    width: clamp(80px, 18vh, 200px);
+    height: clamp(80px, 18vh, 200px);
     object-fit: contain;
     flex-shrink: 0;
 
-    @media (max-width: 1023px) {
-      width: 150px;
-      height: 150px;
+    @media (max-width: 1439px) {
+      width: clamp(90px, 16vh, 150px);
+      height: clamp(90px, 16vh, 150px);
     }
 
     @media (max-width: 640px) {
-      width: 120px;
-      height: 120px;
+      width: clamp(90px, 15vh, 140px);
+      height: clamp(90px, 15vh, 140px);
     }
   }
 
   .sidebar-close {
     display: none;
 
-    @media (max-width: 1023px) {
+    @media (max-width: 1439px) {
       display: flex;
       position: absolute;
       top: 1rem;
@@ -140,20 +143,32 @@
 }
 
 .sidebar-nav {
-  padding: 0.5rem 0;
-  flex: 1;
+  padding: clamp(0.25rem, 0.8vh, 0.5rem) 0;
+  flex: 1 1 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
   overflow-y: auto;
   overflow-x: hidden;
+  /* Hide visible scrollbar while keeping scroll behavior */
+  scrollbar-width: none; /* Firefox */
+
+  &::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+  }
 
   .nav-item {
+    flex: 0 0 auto;
+    min-height: 36px;
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 12px 1rem;
-    margin: 2px 0;
+    gap: clamp(8px, 1.2vw, 12px);
+    padding: clamp(6px, 1.2vh, 12px) 1rem;
+    margin: 1px 0;
     color: var(--sidebar-text);
     text-decoration: none;
-    font-size: 0.9375rem;
+    font-size: clamp(0.75rem, 1.5vh, 0.9375rem);
     border-radius: var(--radius);
     position: relative;
     overflow: hidden;
@@ -163,11 +178,6 @@
       color 0.2s ease,
       border-left-color 0.2s ease,
       padding-left 0.2s ease;
-
-    @media (max-width: 640px) {
-      padding: 10px 0.875rem;
-      font-size: 0.875rem;
-    }
 
     &.active {
       background: var(--sidebar-active);
@@ -197,51 +207,38 @@
     opacity: 0.9;
 
     svg {
-      width: 1.1rem;
-      height: 1.1rem;
-
-      @media (max-width: 640px) {
-        width: 1rem;
-        height: 1rem;
-      }
+      width: clamp(1rem, 1.4vh, 1.25rem);
+      height: clamp(1rem, 1.4vh, 1.25rem);
     }
   }
 }
 
 .sidebar-footer {
-  padding: 1rem;
+  padding: clamp(0.5rem, 1.5vh, 1rem);
   border-top: 1px solid var(--sidebar-border);
   flex-shrink: 0;
 
   .time-display {
     text-align: center;
     color: var(--sidebar-text);
-    padding: 0.75rem 1rem;
+    padding: clamp(0.5rem, 1vh, 0.75rem) 1rem;
     background: var(--sidebar-footer-bg);
     border-radius: var(--radius);
     width: 100%;
     box-sizing: border-box;
 
     &__time {
-      font-size: 1.5rem;
+      font-size: clamp(1rem, 2.5vh, 1.5rem);
       font-weight: 600;
       color: var(--sidebar-text-active);
-      margin-bottom: 0.25rem;
+      margin-bottom: clamp(0.125rem, 0.3vh, 0.25rem);
       font-variant-numeric: tabular-nums;
-
-      @media (max-width: 640px) {
-        font-size: 1.25rem;
-      }
     }
 
     &__date {
-      font-size: 0.875rem;
+      font-size: clamp(0.65rem, 1.2vh, 0.875rem);
       color: var(--sidebar-text);
       opacity: 0.9;
-
-      @media (max-width: 640px) {
-        font-size: 0.75rem;
-      }
     }
   }
 }
@@ -254,7 +251,7 @@
   min-height: 0;
   width: 100%;
 
-  @media (max-width: 1023px) {
+  @media (max-width: 1439px) {
     width: 100%;
   }
 }
@@ -270,7 +267,7 @@
     animation: contentFadeIn 0.3s ease-out;
   }
 
-  @media (max-width: 1023px) {
+  @media (max-width: 1439px) {
     padding-top: calc(72px + 20px);
   }
 
@@ -291,7 +288,7 @@
   .content {
     padding-top: 1.5rem;
 
-    @media (max-width: 1023px) {
+    @media (max-width: 1439px) {
       padding-top: 1.5rem;
     }
 
@@ -334,19 +331,22 @@
   padding-right: 24px;
   transition: transform 0.3s ease-out, filter 0.3s ease-out;
 
-  @media (min-width: 1024px) {
+  /* Desktop: sidebar always visible */
+  @media (min-width: 1440px) {
     left: 280px;
   }
 
-  /* Mobile: reserve space so title sits next to hamburger (16px + 44px + 12px gap) */
-  @media (max-width: 1023px) {
+  /* Laptop + mobile: drawer, reserve space for hamburger */
+  @media (max-width: 1439px) {
     padding-left: 72px;
 
-    /* When sidebar is open, push topbar back and blur it */
+    /* When sidebar is open on mobile, hide top bar content so it
+       doesn't overlap with the slide-in sidebar menu. */
     &.top-bar--sidebar-open {
       transform: none; /* keep top bar fixed; avoid sideways push */
-      filter: blur(4px);
-      -webkit-filter: blur(4px);
+      opacity: 0;
+      pointer-events: none;
+      z-index: 0; /* move behind sidebar/backdrop */
     }
   }
 
@@ -355,9 +355,11 @@
     padding-left: 72px;
     padding-right: 20px;
 
-    /* Adjust transform for smaller sidebar width */
     &.top-bar--sidebar-open {
-      transform: none; /* keep top bar fixed; avoid sideways push */
+      transform: none;
+      opacity: 0;
+      pointer-events: none;
+      z-index: 0;
     }
   }
 }
@@ -366,6 +368,7 @@
   flex: 1 1 auto; /* allow title to shrink so right-side icons stay put */
   margin: 0;
   margin-right: auto;
+  font-family: var(--font-family-title);
   font-size: 1.125rem;
   font-weight: 700;
   color: var(--color-text);
@@ -429,17 +432,24 @@
   border: 1px solid var(--color-border);
   background: var(--color-bg-card);
   color: var(--color-text);
-  box-shadow: var(--shadow);
+  box-shadow: var(--shadow-lg);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  transition: background 0.2s, box-shadow 0.2s;
+  transition: background 0.2s ease, box-shadow 0.25s ease, transform 0.2s ease, border-color 0.2s ease;
 
   &:hover {
     background: var(--color-bg);
-    box-shadow: var(--shadow-lg);
+    box-shadow: var(--shadow-lg), 0 0 0 2px var(--color-border);
+    transform: scale(1.06);
+    border-color: var(--color-text-muted, rgba(0, 0, 0, 0.2));
+  }
+
+  &:active {
+    transform: scale(0.97);
+    box-shadow: var(--shadow);
   }
 
   @media (max-width: 640px) {
@@ -459,6 +469,14 @@
   object-fit: contain;
   object-position: center center;
   display: block;
+}
+
+.profile-menu__avatar-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-border, #e5e7eb);
+  font-size: 1.1rem;
 }
 
 .profile-menu__dropdown {
@@ -499,14 +517,47 @@
   text-decoration: none;
   text-align: left;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: background 0.3s ease, opacity 0.2s ease;
 
   &:hover {
-    background: var(--color-bg);
+    background: linear-gradient(
+      to right,
+      rgba(37, 99, 235, 0.14) 0%,
+      rgba(37, 99, 235, 0.05) 12px,
+      transparent 36px
+    );
+  }
+
+  &:active:hover {
+    background: linear-gradient(
+      to right,
+      rgba(37, 99, 235, 0.2) 0%,
+      rgba(37, 99, 235, 0.07) 12px,
+      transparent 36px
+    );
+  }
+
+  &--logout {
+    color: var(--color-error, #dc2626);
   }
 
   &--logout:hover {
+    background: linear-gradient(
+      to right,
+      rgba(220, 38, 38, 0.12) 0%,
+      rgba(220, 38, 38, 0.04) 12px,
+      transparent 36px
+    );
     color: var(--color-error, #dc2626);
+  }
+
+  &--logout:active:hover {
+    background: linear-gradient(
+      to right,
+      rgba(220, 38, 38, 0.18) 0%,
+      rgba(220, 38, 38, 0.06) 12px,
+      transparent 36px
+    );
   }
 }
 
@@ -514,6 +565,11 @@
   font-size: 1rem;
   opacity: 0.9;
   flex-shrink: 0;
+  transition: opacity 0.25s ease;
+
+  .profile-menu__item:hover & {
+    opacity: 1;
+  }
 }
 
 /* Theme toggle lives inside .top-bar; circular like profile/bell */
@@ -527,16 +583,28 @@ button.theme-toggle {
   border: 1px solid var(--color-border);
   background: var(--color-bg-card);
   color: var(--color-text);
-  box-shadow: var(--shadow);
+  box-shadow: var(--shadow-lg);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background 0.2s;
+  transition: background 0.2s ease, box-shadow 0.25s ease, transform 0.2s ease, border-color 0.2s ease;
   overflow: hidden;
 
   &:hover {
     background: var(--color-bg);
+    box-shadow: var(--shadow-lg), 0 0 0 2px var(--color-border);
+    transform: scale(1.06);
+    border-color: var(--color-text-muted, rgba(0, 0, 0, 0.2));
+  }
+
+  &:hover .theme-toggle__icon {
+    transform: rotate(12deg);
+  }
+
+  &:active {
+    transform: scale(0.97);
+    box-shadow: var(--shadow);
   }
 
   @media (max-width: 640px) {
@@ -550,6 +618,7 @@ button.theme-toggle {
 .theme-toggle__icon {
   width: 22px;
   height: 22px;
+  transition: transform 0.25s ease;
 }
 
 .back-to-top {
@@ -655,12 +724,11 @@ button.theme-toggle {
 }
 
 .fab--sidebar-open {
-  z-index: 900; /* keep behind sidebar/backdrop, but still clearly visible */
+  z-index: 900; /* sit behind sidebar/backdrop */
   pointer-events: none; /* avoid clicks while menu is open */
-  /* Blur only when sidebar is open; do not fade it out */
-  filter: blur(4px) brightness(0.9);
-  opacity: 1;
-  transform: translateY(2px);
+  opacity: 0; /* hide while sidebar is open */
+  transform: translateY(6px) scale(0.96);
+  filter: blur(2px);
 }
 
 .fab__icon {

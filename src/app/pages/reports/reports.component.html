@@ -1,6 +1,31 @@
 <div class="reports-page">
   <h1 class="page-title">Reports & Analytics</h1>
 
+  <div class="reports-toolbar">
+    <div class="toolbar-group">
+      <label class="toolbar-label" for="reportPeriod">Report period</label>
+      <select
+        id="reportPeriod"
+        class="toolbar-select"
+        [(ngModel)]="reportPeriod"
+        (change)="onReportPeriodChange()"
+      >
+        <option value="all">All</option>
+        <option value="last_15_days">Last 15 days</option>
+        <option value="this_month">This month</option>
+        <option value="this_semester">This semester</option>
+        <option value="this_year">This year</option>
+      </select>
+      <button
+        type="button"
+        class="btn btn-primary"
+        (click)="exportReports()"
+      >
+        Export
+      </button>
+    </div>
+  </div>
+
   <div class="tabs-wrapper">
     <nav class="tabs" role="tablist">
       <button
@@ -259,7 +284,7 @@
               </tr>
             </thead>
             <tbody>
-              @for (req of data.requests; track req.id) {
+              @for (req of getRequestsForReports(); track req.id) {
                 <tr>
                   <td>{{ req.type }}</td>
                   <td>{{ req.purpose }}</td>

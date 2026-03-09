@@ -131,6 +131,18 @@
   }
 }
 
+.permission-hint {
+  color: var(--color-error, #c53030) !important;
+  margin-bottom: 12px !important;
+}
+
+.permission-tip {
+  font-size: 0.875rem !important;
+  color: var(--color-text-muted) !important;
+  margin-bottom: 24px !important;
+  opacity: 0.9;
+}
+
 .scanner-container {
   display: flex;
   flex-direction: column;

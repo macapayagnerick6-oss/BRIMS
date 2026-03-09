@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { ApiConfigService } from './api-config.service';
 
 export interface SmsPayload {
   to: string;
@@ -34,11 +35,10 @@ export interface BulkSmsResponse {
 export class SmsService {
   private readonly http = inject(HttpClient);
 
-  /**
-   * Base URL of the backend SMS/notification API.
-   * For development, this points to the local Node.js backend created under /backend.
-   */
-  private readonly apiBaseUrl = 'http://localhost:4000';
+  private readonly apiConfig = inject(ApiConfigService);
+  private get apiBaseUrl(): string {
+    return this.apiConfig.apiBaseUrl;
+  }
 
   sendSms(payload: SmsPayload): Observable<SmsResponse> {
     return this.http.post<SmsResponse>(`${this.apiBaseUrl}/api/notifications/sms`, payload);

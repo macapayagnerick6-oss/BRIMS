@@ -113,6 +113,16 @@ import { NotificationTypeLabelPipe } from './services/notification-type-label.pi
         }
       }
 
+      /* When the sidebar drawer is open on laptop/mobile, hide the bell completely
+         and move it behind the drawer so it can't be clicked. */
+      :host-context(body.sidebar-open) .global-notifications {
+        filter: blur(4px);
+        -webkit-filter: blur(4px);
+        opacity: 0;
+        pointer-events: none;
+        z-index: 0;
+      }
+
       .global-notifications__bell {
         position: relative;
         display: inline-flex;
@@ -126,7 +136,7 @@ import { NotificationTypeLabelPipe } from './services/notification-type-label.pi
         color: var(--color-text);
         box-shadow: var(--shadow-lg);
         cursor: pointer;
-        transition: background 0.2s, transform 0.05s;
+        transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.25s ease, border-color 0.2s ease;
         
         @media (max-width: 640px) {
           width: 40px;
@@ -136,10 +146,25 @@ import { NotificationTypeLabelPipe } from './services/notification-type-label.pi
 
       .global-notifications__bell:hover {
         background: var(--color-bg);
+        box-shadow: var(--shadow-lg), 0 0 0 2px var(--color-border);
+        transform: scale(1.06);
+        border-color: var(--color-text-muted, rgba(0, 0, 0, 0.2));
       }
 
       .global-notifications__bell:active {
-        transform: translateY(1px);
+        transform: scale(0.97);
+        box-shadow: var(--shadow);
+      }
+
+      /* When SweetAlert2 is open (e.g. logout confirm), remove focus/hover highlight from bell */
+      :host-context(body.swal2-shown) .global-notifications__bell:hover,
+      :host-context(body.swal2-shown) .global-notifications__bell:focus,
+      :host-context(body.swal2-shown) .global-notifications__bell:focus-visible {
+        outline: none;
+        box-shadow: var(--shadow-lg);
+        transform: scale(1);
+        border-color: var(--color-border);
+        background: var(--color-bg-card);
       }
 
       .global-notifications__icon {
@@ -398,9 +423,6 @@ export class AppComponent implements OnInit, OnDestroy {
     private router: Router,
     private notificationsService: NotificationService,
   ) {
-    const initialPath = typeof window !== 'undefined' ? window.location.pathname : this.router.url;
-    this.updateGlobalUi(initialPath);
-
     this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
         this.updateGlobalUi(event.urlAfterRedirects);
@@ -460,26 +482,29 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   private updateGlobalUi(url: string) {
-    // Hide on login page, forgot password page, reset password page, settings page,
+    // Hide on login page, forgot password page, reset password page,
     // resident profile, request details page, QR scanner page, 404 error page,
     // and the full-screen household map page (maximize map space).
-    const isStaffRequestDetailPage = url.startsWith('/staff/requests/') && url !== '/staff/requests';
-    const isResidentProfilePage = /^\/staff\/residents\/[^/]+$/.test(url); // e.g. /staff/residents/1
+    const isStaffOrAdminRequestDetailPage =
+      /^\/(staff|admin)\/requests\/[^/]+$/.test(url); // e.g. /staff/requests/1 or /admin/requests/1
+    const isResidentProfilePage =
+      /^\/(staff|admin)\/residents\/[^/]+$/.test(url); // e.g. /staff/residents/1 or /admin/residents/1
     const isQrScannerPage = url.includes('/qr-scanner');
-    const isHouseholdMapPage = url.startsWith('/staff/households/map');
+    const isHouseholdMapPage =
+      /^\/(staff|admin)\/households\/map/.test(url); // e.g. /staff/households/map or /admin/households/map
     
     // Check if the currently activated route is the 404 / wildcard route
     const isNotFoundRoute = this.isNotFoundRouteSnapshot(this.router.routerState.snapshot.root);
     
-    this.showGlobalUi = !url.startsWith('/login') 
+    this.showGlobalUi = !url.startsWith('/login')
+      && !url.startsWith('/contact')
       && !url.startsWith('/forgot-password')
       && !url.startsWith('/reset-password')
-      && !url.includes('/settings')
       && !url.includes('/residents/add')
       && !url.includes('/households/add')
       && !(url.includes('/households/') && url.includes('/edit'))
       && !isResidentProfilePage
-      && !isStaffRequestDetailPage
+      && !isStaffOrAdminRequestDetailPage
       && !isQrScannerPage
       && !isHouseholdMapPage
       && !isNotFoundRoute;

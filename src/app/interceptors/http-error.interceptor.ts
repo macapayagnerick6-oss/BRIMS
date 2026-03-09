@@ -3,6 +3,7 @@ import { inject } from '@angular/core';
 import { catchError, retry, throwError, timer } from 'rxjs';
 import { NotificationService } from '../services/notification.service';
 import { ErrorHandlerService } from '../services/error-handler.service';
+import { ApiConfigService } from '../services/api-config.service';
 
 /**
  * HTTP Error Interceptor
@@ -16,11 +17,15 @@ import { ErrorHandlerService } from '../services/error-handler.service';
 export const httpErrorInterceptor: HttpInterceptorFn = (req, next) => {
   const notificationService = inject(NotificationService);
   const errorHandler = inject(ErrorHandlerService);
+  const apiConfig = inject(ApiConfigService);
 
   // Determine retry configuration based on request
+  const isNotificationApi = req.url.includes('/api/notifications/');
   const shouldRetry = (error: HttpErrorResponse): boolean => {
+    // Don't retry connection errors for notifications - fail fast for clearer feedback
+    if (isNotificationApi && error.status === 0) return false;
     // Retry on network errors or 5xx server errors (except 501)
-    if (error.status === 0) return true; // Network error
+    if (error.status === 0) return true;
     if (error.status >= 500 && error.status !== 501) return true;
     return false;
   };
@@ -49,9 +54,16 @@ export const httpErrorInterceptor: HttpInterceptorFn = (req, next) => {
       let errorTitle = 'Request Failed';
 
       if (error.status === 0) {
-        // Network error
-        errorMessage = 'Unable to connect to the server. Please check your internet connection.';
-        errorTitle = 'Connection Error';
+        // Network error (often in production: wrong backend URL or CORS)
+        if (apiConfig.isPlaceholderUrl) {
+          errorMessage =
+            'Backend URL is not set. Set apiBaseUrl in src/assets/config.json to your backend URL (no trailing slash), then redeploy.';
+          errorTitle = 'Backend Not Configured';
+        } else {
+          errorMessage =
+            'Cannot reach the notification server. Check that the backend is running and CORS allows this site. In production, set apiBaseUrl in assets/config.json.';
+          errorTitle = 'Connection Error';
+        }
       } else if (error.error?.message) {
         errorMessage = error.error.message;
       } else if (error.error?.error) {
@@ -77,6 +89,9 @@ export const httpErrorInterceptor: HttpInterceptorFn = (req, next) => {
       } else if (error.status === 429) {
         errorMessage = 'Too many requests. Please wait a moment and try again.';
         errorTitle = 'Too Many Requests';
+      } else if (error.status === 413) {
+        errorMessage = error.error?.error || 'The email or attachment is too large. Try sending without attachment or use a smaller file.';
+        errorTitle = 'Request Too Large';
       }
 
       // Show user-facing notification

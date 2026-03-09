@@ -43,6 +43,34 @@ export class ErrorHandlerService implements ErrorHandler {
     const errorMessage = this.extractErrorMessage(error);
     const errorTitle = this.extractErrorTitle(error);
 
+    // Handle dynamic import chunk loading errors (often caused by a new deploy
+    // while an old version of the app is still open in the browser). A quick
+    // full page reload usually fixes this by loading the latest bundles.
+    if (typeof errorMessage === 'string' &&
+        errorMessage.includes('Failed to fetch dynamically imported module')) {
+      console.warn(
+        'Detected dynamic import failure. This is usually caused by an out-of-date ' +
+        'app version. Reloading the page to load the latest version...',
+        error
+      );
+
+      const notificationService = this.getNotificationService();
+      if (notificationService) {
+        notificationService.error(
+          'The app was updated. Reloading to load the latest version...',
+          'Updating BRIMS'
+        );
+      }
+
+      if (typeof window !== 'undefined' && window.location && navigator.onLine) {
+        setTimeout(() => window.location.reload(), 500);
+      }
+
+      // We handled this error specifically, no need to continue with the
+      // generic error flow.
+      return;
+    }
+
     // Throttle identical errors so we don't spam notifications
     const key = `${errorTitle}|${errorMessage}`;
     const now = Date.now();

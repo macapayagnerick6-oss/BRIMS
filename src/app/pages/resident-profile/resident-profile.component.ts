@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { DataService, Household, Resident, CertificateRequest } from '../../services/data.service';
 import { QrCodeService } from '../../services/qr-code.service';
+import { Subscription } from 'rxjs';
 
 const CERTIFICATE_TYPES = ['Barangay Clearance', 'Certificate of Residency', 'Request Clearance'];
 
@@ -14,7 +15,7 @@ const CERTIFICATE_TYPES = ['Barangay Clearance', 'Certificate of Residency', 'Re
   templateUrl: './resident-profile.component.html',
   styleUrls: ['./resident-profile.component.scss'],
 })
-export class ResidentProfileComponent implements OnInit {
+export class ResidentProfileComponent implements OnInit, OnDestroy {
   resident: Resident | undefined;
   household: Household | undefined;
   activeTab = 'personal';
@@ -33,43 +34,32 @@ export class ResidentProfileComponent implements OnInit {
   editingField: 'name' | 'contact' | 'email' | 'address' | null = null;
   editValue = '';
 
+  private routeResidentId: string | null = null;
+  private residentsSub?: Subscription;
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private data: DataService,
     private qrCodeService: QrCodeService,
-  ) {
-    // Initialize on first load
-    const id = this.route.snapshot.paramMap.get('id');
-    if (id) {
-      this.resident = this.data.getResidentById(id) || this.data.getResidentByResidentId(id);
-      if (this.resident) {
-        this.household = this.data.getHouseholdByResidentId(this.resident.residentId);
-      }
-    }
-  }
+  ) {}
 
   ngOnInit() {
-    // Handle route changes
+    // Watch route param changes
     this.route.paramMap.subscribe(params => {
-      const id = params.get('id');
-      if (id) {
-        // Try both id and residentId lookups
-        this.resident = this.data.getResidentById(id) || this.data.getResidentByResidentId(id);
-        if (this.resident) {
-          this.household = this.data.getHouseholdByResidentId(this.resident.residentId);
-          this.generateQRCode();
-        } else {
-          this.household = undefined;
-          this.qrCodeDataUrl = null;
-        }
-      } else {
-        this.resident = undefined;
-        this.household = undefined;
-        this.qrCodeDataUrl = null;
-      }
+      this.routeResidentId = params.get('id');
+      this.loadResidentFromData();
       this.cancelEdit();
     });
+
+    // React to data loading (important when page is opened directly in a new tab)
+    this.residentsSub = this.data.residentsObservable.subscribe(() => {
+      this.loadResidentFromData();
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.residentsSub?.unsubscribe();
   }
 
   generateQRCode(): void {
@@ -99,6 +89,25 @@ export class ResidentProfileComponent implements OnInit {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+  }
+
+  private loadResidentFromData(): void {
+    const id = this.routeResidentId;
+    if (id) {
+      // Try both id and residentId lookups
+      this.resident = this.data.getResidentById(id) || this.data.getResidentByResidentId(id);
+      if (this.resident) {
+        this.household = this.data.getHouseholdByResidentId(this.resident.residentId);
+        this.generateQRCode();
+      } else {
+        this.household = undefined;
+        this.qrCodeDataUrl = null;
+      }
+    } else {
+      this.resident = undefined;
+      this.household = undefined;
+      this.qrCodeDataUrl = null;
+    }
   }
 
   startEdit(field: 'name' | 'contact' | 'email' | 'address'): void {

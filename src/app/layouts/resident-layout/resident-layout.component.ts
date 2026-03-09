@@ -38,10 +38,8 @@ export class ResidentLayoutComponent implements OnInit, AfterViewInit, OnDestroy
     return null;
   }
 
-  /** Hide profile + theme toggle only on settings page */
+  /** Always show profile + theme toggle (including on resident settings/accounts). */
   get showTopRightUi(): boolean {
-    const url = this.router.url;
-    if (url.includes('/settings')) return false;
     return true;
   }
 
@@ -125,7 +123,7 @@ export class ResidentLayoutComponent implements OnInit, AfterViewInit, OnDestroy
     if (result.isConfirmed) {
       this.auth.logout();
       this.router.navigate(['/login']);
-      this.alert.success('Logged out', 'You have been logged out.');
+      this.alert.successToast('Logged out', 'You have been logged out.', 1000);
     }
   }
 

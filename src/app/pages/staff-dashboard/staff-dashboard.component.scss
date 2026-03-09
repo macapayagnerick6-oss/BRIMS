@@ -43,13 +43,14 @@
   border-radius: var(--radius-lg);
   text-decoration: none;
   font-weight: 500;
-  transition: all 0.2s ease;
+  transition: all 0.2s ease, filter 0.2s ease;
   box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
   
   &:hover {
     background: #2563eb;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+    transform: scale(1.03);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25), 0 4px 14px rgba(59, 130, 246, 0.35);
+    filter: brightness(1.05);
   }
   
   @media (max-width: 640px) {

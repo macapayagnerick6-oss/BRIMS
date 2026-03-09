@@ -8,6 +8,73 @@
   margin: 0 0 1.5rem;
 }
 
+.reports-toolbar {
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-end;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.toolbar-group {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.toolbar-label {
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+}
+
+.toolbar-select {
+  min-width: 190px;
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-card);
+  color: var(--color-text);
+}
+
+.btn {
+  padding: 0.5rem 0.9rem;
+  border-radius: 9999px;
+  border: 1px solid transparent;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+
+  &:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+}
+
+.btn-primary {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: #ffffff;
+  box-shadow: 0 1px 3px rgba(37, 99, 235, 0.35);
+
+  &:hover {
+    background: var(--color-primary-dark, #1d4ed8);
+    border-color: var(--color-primary-dark, #1d4ed8);
+  }
+}
+
+.btn-outline {
+  background: transparent;
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+
+  &:hover {
+    background: var(--color-primary-bg);
+  }
+}
+
 .tabs-wrapper {
   margin-bottom: 1.75rem;
 }
@@ -57,6 +124,19 @@
     color: white;
     background: var(--color-primary);
     box-shadow: 0 2px 8px rgba(37, 99, 235, 0.35);
+  }
+}
+
+@media (max-width: 768px) {
+  .reports-toolbar {
+    justify-content: center;
+    text-align: center;
+  }
+
+  /* On mobile, hide inline period label + select so only Export button shows */
+  .toolbar-label,
+  .toolbar-select {
+    display: none;
   }
 }
 

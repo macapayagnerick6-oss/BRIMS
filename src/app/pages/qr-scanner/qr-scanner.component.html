@@ -12,8 +12,12 @@
       <div class="permission-icon">📷</div>
       <h2>Camera Permission Required</h2>
       <p>Please allow camera access to scan QR codes.</p>
+      @if (scanError) {
+        <p class="permission-hint">{{ scanError }}</p>
+      }
+      <p class="permission-tip">Tip: If your built-in webcam is not detected, try Chrome settings (chrome://settings/content/camera) to select it, or close other apps using the camera.</p>
       <button type="button" class="btn btn--primary" (click)="retryPermission()">
-        Grant Permission
+        Try Again
       </button>
     </div>
   }
@@ -51,7 +55,7 @@
 
       <div class="scanner-controls">
         <div class="scanner-controls__row">
-          @if (availableDevices.length > 1) {
+          @if (availableDevices.length > 0) {
             <div class="control-group">
               <label for="camera-select">
                 <span class="control-label__icon">📷</span>
@@ -99,7 +103,26 @@
       </div>
       <div class="scan-result__content">
         <p class="scan-result__code">{{ scanResult }}</p>
-        @if (scanError) {
+        @if (scanResultUrl) {
+          <p class="scan-result__success">
+            This looks like a link:
+            <a
+              [href]="scanResultUrl"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {{ scanResultUrl }}
+            </a>
+          </p>
+          <a
+            class="btn btn--primary btn--sm"
+            [href]="scanResultUrl"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Open link in new tab
+          </a>
+        } @else if (scanError) {
           <p class="scan-result__error">{{ scanError }}</p>
         } @else {
           <p class="scan-result__success">Processing...</p>

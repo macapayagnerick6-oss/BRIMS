@@ -31,6 +31,15 @@ export class StaffLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
     private alert: AlertService,
   ) {}
 
+  /** Hide mobile hamburger on QR scanner + add resident/household forms */
+  get showMobileMenuToggle(): boolean {
+    const url = this.router.url;
+    if (url.includes('/qr-scanner')) return false;
+    if (url.includes('/residents/add')) return false;
+    if (url.includes('/households/add')) return false;
+    return true;
+  }
+
   /** FAB shown on list pages; link to add resident or add household */
   get fabLink(): { link: string; label: string } | null {
     const url = this.router.url;
@@ -39,11 +48,10 @@ export class StaffLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
     return null;
   }
 
-  /** Hide profile + theme toggle on forms, settings, resident profile, request detail, QR scanner, edit household */
+  /** Hide profile + theme toggle on forms, resident profile, request detail, QR scanner, edit household */
   get showTopRightUi(): boolean {
     const url = this.router.url;
     if (url.startsWith('/staff/households/map')) return false; // maximize map space
-    if (url.includes('/settings')) return false;
     if (url.includes('/residents/add') || url.includes('/households/add')) return false;
     if (url.includes('/households/') && url.includes('/edit')) return false; // edit household form
     if (url.includes('/qr-scanner')) return false;
@@ -143,7 +151,7 @@ export class StaffLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
     if (result.isConfirmed) {
       this.auth.logout();
       this.router.navigate(['/login']);
-      this.alert.success('Logged out', 'You have been logged out.');
+      this.alert.successToast('Logged out', 'You have been logged out.', 1000);
     }
   }
 

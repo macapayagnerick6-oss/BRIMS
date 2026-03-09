@@ -25,7 +25,7 @@ export class AuthService {
     private data: DataService,
     private audit: AuditLogService,
   ) {
-    const raw = sessionStorage.getItem(this.STORAGE_KEY);
+    const raw = localStorage.getItem(this.STORAGE_KEY);
     if (raw) {
       try {
         const user = JSON.parse(raw) as User;
@@ -77,7 +77,7 @@ export class AuthService {
         email: resident.email ?? normalizedEmail,
         role: 'resident',
       };
-      sessionStorage.setItem(this.STORAGE_KEY, JSON.stringify(user));
+      localStorage.setItem(this.STORAGE_KEY, JSON.stringify(user));
       this.currentProfilePicture$.next(resident.profilePicture ?? this.getStoredProfilePicture(user.id));
       this.audit.log({
         action: 'Login',
@@ -105,7 +105,7 @@ export class AuthService {
         email: staffOrAdmin.email,
         role,
       };
-      sessionStorage.setItem(this.STORAGE_KEY, JSON.stringify(user));
+      localStorage.setItem(this.STORAGE_KEY, JSON.stringify(user));
       this.currentProfilePicture$.next(staffOrAdmin.profilePicture ?? this.getStoredProfilePicture(user.id));
       this.audit.log({
         action: 'Login',
@@ -118,10 +118,10 @@ export class AuthService {
       return { success: true, role };
     }
 
-    // 3. Fallback: demo accounts (any password) for first-time use
-    if (normalizedEmail === 'staff@barangay.gov' && pwd) {
+    // 3. Fallback: demo accounts with fixed default passwords
+    if (normalizedEmail === 'staff@barangay.gov' && pwd === 'staff123') {
       const user: User = { id: '1', name: 'Staff User', email: normalizedEmail, role: 'staff' };
-      sessionStorage.setItem(this.STORAGE_KEY, JSON.stringify(user));
+      localStorage.setItem(this.STORAGE_KEY, JSON.stringify(user));
       this.currentProfilePicture$.next(this.getStoredProfilePicture(user.id));
       this.audit.log({
         action: 'Login',
@@ -133,9 +133,9 @@ export class AuthService {
       });
       return { success: true, role: 'staff' };
     }
-    if (normalizedEmail === 'admin@barangay.gov' && pwd) {
+    if (normalizedEmail === 'admin@barangay.gov' && pwd === 'admin123') {
       const user: User = { id: '4', name: 'Admin User', email: normalizedEmail, role: 'admin' };
-      sessionStorage.setItem(this.STORAGE_KEY, JSON.stringify(user));
+      localStorage.setItem(this.STORAGE_KEY, JSON.stringify(user));
       this.currentProfilePicture$.next(this.getStoredProfilePicture(user.id));
       this.audit.log({
         action: 'Login',
@@ -147,9 +147,9 @@ export class AuthService {
       });
       return { success: true, role: 'admin' };
     }
-    if (normalizedEmail === 'resident@email.com' && pwd) {
+    if (normalizedEmail === 'resident@email.com' && pwd === 'resident123') {
       const user: User = { id: '1', name: 'Juan Dela Cruz', email: normalizedEmail, role: 'resident' };
-      sessionStorage.setItem(this.STORAGE_KEY, JSON.stringify(user));
+      localStorage.setItem(this.STORAGE_KEY, JSON.stringify(user));
       this.currentProfilePicture$.next(this.getStoredProfilePicture(user.id));
       this.audit.log({
         action: 'Login',
@@ -177,19 +177,29 @@ export class AuthService {
         details: 'User logged out',
       });
     }
-    sessionStorage.removeItem(this.STORAGE_KEY);
+    localStorage.removeItem(this.STORAGE_KEY);
+    // Also clear any legacy sessionStorage value if present
+    try {
+      sessionStorage.removeItem(this.STORAGE_KEY);
+    } catch {
+      // ignore
+    }
     this.currentProfilePicture$.next(null);
     this.theme.setTheme('light');
   }
 
   get currentUser(): User | null {
-    const raw = sessionStorage.getItem(this.STORAGE_KEY);
+    const raw = localStorage.getItem(this.STORAGE_KEY);
     if (!raw) return null;
     try {
       return JSON.parse(raw) as User;
     } catch {
       // If stored data is corrupted, clear it to avoid runtime errors.
-      sessionStorage.removeItem(this.STORAGE_KEY);
+      try {
+        localStorage.removeItem(this.STORAGE_KEY);
+      } catch {
+        // ignore
+      }
       return null;
     }
   }
@@ -280,45 +290,55 @@ export class AuthService {
     }
   }
 
-  forgotPassword(email: string): { success: boolean; message?: string } {
-    // Demo: Check if email exists in our demo users
-    const validEmails = ['staff@barangay.gov', 'admin@barangay.gov', 'resident@email.com'];
-    
-    if (!validEmails.includes(email)) {
-      // In a real app, you might still return success to prevent email enumeration
-      // For demo purposes, we'll be more explicit
+  /** Returns success and optional resetLink so the caller can send it via Nodemailer (backend). */
+  forgotPassword(email: string): { success: boolean; message?: string; resetLink?: string } {
+    const normalizedEmail = email?.trim().toLowerCase() ?? '';
+
+    // Check if email exists in residents (same as login)
+    const residentExists = this.data.residents.some(
+      (r) => r.email?.trim().toLowerCase() === normalizedEmail
+    );
+    // Check if email exists in staff/admin users (same as login)
+    const staffOrAdminExists = this.data.users.some(
+      (u) =>
+        u.email?.trim().toLowerCase() === normalizedEmail &&
+        (u.role === 'Staff' || u.role === 'Admin') &&
+        u.status === 'Active'
+    );
+
+    if (!residentExists && !staffOrAdminExists) {
       return { success: false, message: 'Email not found in our system.' };
     }
 
-    // Generate a simple reset token (in production, use a secure random token)
     const resetToken = this.generateResetToken();
-    
-    // Store reset token temporarily (in production, store in database with expiration)
+
     const resetData = {
-      email,
+      email: normalizedEmail,
       token: resetToken,
       expiresAt: Date.now() + 3600000, // 1 hour from now
     };
-    
-    sessionStorage.setItem(`reset_token_${email}`, JSON.stringify(resetData));
-    
-    // In a real app, send email with reset link
-    // For demo: log the reset link
-    console.log(`Reset link for ${email}: /reset-password?token=${resetToken}&email=${encodeURIComponent(email)}`);
-    
-    return { success: true };
+
+    sessionStorage.setItem(`reset_token_${normalizedEmail}`, JSON.stringify(resetData));
+
+    const origin = typeof window !== 'undefined' ? window.location.origin : '';
+    const resetLink = `${origin}/reset-password?token=${resetToken}&email=${encodeURIComponent(normalizedEmail)}`;
+
+    return { success: true, resetLink };
   }
 
   resetPassword(token: string, email: string, newPassword: string): { success: boolean; message?: string } {
+    const normalizedEmail = email?.trim().toLowerCase() ?? '';
+    const storageKey = `reset_token_${normalizedEmail}`;
+
     // Retrieve reset token from storage
-    const resetDataStr = sessionStorage.getItem(`reset_token_${email}`);
-    
+    const resetDataStr = sessionStorage.getItem(storageKey);
+
     if (!resetDataStr) {
       return { success: false, message: 'Invalid or expired reset token.' };
     }
 
     const resetData = JSON.parse(resetDataStr);
-    
+
     // Check if token matches
     if (resetData.token !== token) {
       return { success: false, message: 'Invalid reset token.' };
@@ -326,13 +346,13 @@ export class AuthService {
 
     // Check if token has expired
     if (Date.now() > resetData.expiresAt) {
-      sessionStorage.removeItem(`reset_token_${email}`);
+      sessionStorage.removeItem(storageKey);
       return { success: false, message: 'Reset token has expired. Please request a new one.' };
     }
 
     // In a real app, update password in database
     // For demo: just remove the reset token
-    sessionStorage.removeItem(`reset_token_${email}`);
+    sessionStorage.removeItem(storageKey);
     
     // Log password reset (in production, update database)
     console.log(`Password reset for ${email} completed successfully.`);
@@ -341,7 +361,13 @@ export class AuthService {
   }
 
   private generateResetToken(): string {
-    // Simple token generation for demo (in production, use crypto.randomBytes or similar)
-    return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+    // Cryptographically secure token (browser crypto.subtle / getRandomValues)
+    const array = new Uint8Array(32);
+    if (typeof crypto !== 'undefined' && crypto.getRandomValues) {
+      crypto.getRandomValues(array);
+    } else {
+      for (let i = 0; i < array.length; i++) array[i] = Math.floor(Math.random() * 256);
+    }
+    return Array.from(array, (b) => b.toString(16).padStart(2, '0')).join('');
   }
 }

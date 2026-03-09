@@ -129,6 +129,22 @@
   }
 }
 
+@media (max-width: 640px) {
+  .tabs {
+    flex-direction: column;
+    padding: 6px;
+    gap: 0.5rem;
+
+    button {
+      width: 100%;
+      padding: 10px 16px;
+      font-size: 0.875rem;
+      white-space: normal;
+      text-align: center;
+    }
+  }
+}
+
 .profile-top {
   display: flex;
   gap: 1.5rem;

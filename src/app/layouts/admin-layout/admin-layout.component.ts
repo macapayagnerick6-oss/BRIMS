@@ -31,11 +31,37 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
     private alert: AlertService,
   ) {}
 
-  /** Hide profile + theme toggle on settings page */
+  /** Hide mobile hamburger on QR scanner + add resident/household forms */
+  get showMobileMenuToggle(): boolean {
+    const url = this.router.url;
+    if (url.includes('/qr-scanner')) return false;
+    if (url.includes('/residents/add')) return false;
+    if (url.includes('/households/add')) return false;
+    return true;
+  }
+
+  /**
+   * Control visibility of the fixed top-right UI (theme toggle + profile).
+   *
+   * We hide it on:
+   * - settings pages
+   * - QR scanner
+   * - resident / household add forms
+   * - household edit form
+   * - resident profile detail
+   * - request detail pages
+   *
+   * This mirrors the behavior in the staff layout so forms like
+   * "Add Resident" and "Add Household" don't show the top bar.
+   */
   get showTopRightUi(): boolean {
     const url = this.router.url;
-    if (url.includes('/admin/settings')) return false;
+    if (url.startsWith('/admin/households/map')) return false;
+    if (url.includes('/residents/add') || url.includes('/households/add')) return false;
+    if (url.includes('/households/') && url.includes('/edit')) return false;
     if (url.includes('/qr-scanner')) return false;
+    if (/^\/admin\/residents\/[^/]+$/.test(url)) return false; // resident profile
+    if (url.startsWith('/admin/requests/') && url !== '/admin/requests') return false; // request detail
     return true;
   }
 
@@ -136,7 +162,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
     if (result.isConfirmed) {
       this.auth.logout();
       this.router.navigate(['/login']);
-      this.alert.success('Logged out', 'You have been logged out.');
+      this.alert.successToast('Logged out', 'You have been logged out.', 1000);
     }
   }
 

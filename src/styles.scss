@@ -16,6 +16,11 @@
   --color-warning-dark: #c2410c;
   --color-warning-bg: #ffedd5;
 
+  /* Danger - Red */
+  --color-danger: #dc2626;
+  --color-danger-dark: #b91c1c;
+  --color-danger-bg: #fee2e2;
+
   /* Neutral */
   --color-bg: #f8fafc;
   --color-bg-card: #ffffff;
@@ -43,8 +48,12 @@
   --sidebar-close-hover-bg: rgba(255, 255, 255, 0.2);
   --sidebar-border: rgba(255, 255, 255, 0.1);
   --sidebar-footer-bg: rgba(255, 255, 255, 0.05);
+  --sidebar-scrollbar-track: rgba(255, 255, 255, 0.08);
+  --sidebar-scrollbar-thumb: rgba(255, 255, 255, 0.25);
+  --sidebar-scrollbar-thumb-hover: rgba(255, 255, 255, 0.4);
 
   --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-family-title: 'Sora', var(--font-family);
   --radius: 8px;
   --radius-lg: 12px;
   --shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
@@ -69,6 +78,10 @@
   --color-warning-dark: #ea580c;
   --color-warning-bg: rgba(249, 115, 22, 0.15);
 
+  --color-danger: #ef4444;
+  --color-danger-dark: #dc2626;
+  --color-danger-bg: rgba(239, 68, 68, 0.15);
+
   --color-bg: #0f172a;
   --color-bg-card: #1e293b;
   --color-bg-secondary: #334155;
@@ -88,6 +101,9 @@
   --sidebar-close-hover-bg: rgba(0, 0, 0, 0.1);
   --sidebar-border: rgba(0, 0, 0, 0.1);
   --sidebar-footer-bg: rgba(0, 0, 0, 0.05);
+  --sidebar-scrollbar-track: rgba(0, 0, 0, 0.06);
+  --sidebar-scrollbar-thumb: rgba(0, 0, 0, 0.2);
+  --sidebar-scrollbar-thumb-hover: rgba(0, 0, 0, 0.35);
 
   /* Inputs & dropdowns stay light in dark mode for readability */
   --color-bg-input: #f8fafc;
@@ -238,12 +254,18 @@ a {
   font-weight: 500;
   border: none;
   border-radius: var(--radius);
-  transition: background 0.2s, box-shadow 0.2s, transform 0.15s ease;
+  transition: background 0.2s ease, box-shadow 0.25s ease, transform 0.2s ease, border-color 0.2s ease, filter 0.2s ease;
   font-size: 0.9375rem;
   white-space: nowrap;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 
-  &:active {
-    transform: scale(0.98);
+  &:active:not(:disabled) {
+    transform: scale(0.97);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.65;
   }
   
   @media (max-width: $breakpoint-sm) {
@@ -254,18 +276,43 @@ a {
   &--primary {
     background: var(--color-primary);
     color: white;
-    &:hover { background: var(--color-primary-dark); }
+    &:hover:not(:disabled) {
+      background: var(--color-primary-dark);
+      transform: scale(1.03);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.25), 0 4px 14px rgba(37, 99, 235, 0.3);
+      filter: brightness(1.05);
+    }
   }
   &--success {
     background: var(--color-success);
     color: white;
-    &:hover { background: var(--color-success-dark); }
+    &:hover:not(:disabled) {
+      background: var(--color-success-dark);
+      transform: scale(1.03);
+      box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.25), 0 4px 14px rgba(22, 163, 74, 0.3);
+      filter: brightness(1.05);
+    }
+  }
+  &--danger {
+    background: var(--color-danger);
+    color: white;
+    &:hover:not(:disabled) {
+      background: var(--color-danger-dark);
+      transform: scale(1.03);
+      box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.25), 0 4px 14px rgba(220, 38, 38, 0.3);
+      filter: brightness(1.05);
+    }
   }
   &--outline {
     background: transparent;
     color: var(--color-primary);
     border: 1px solid var(--color-primary);
-    &:hover { background: var(--color-primary-bg); }
+    &:hover:not(:disabled) {
+      background: var(--color-primary-bg);
+      transform: scale(1.02);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+      border-color: var(--color-primary-light);
+    }
   }
   &--sm { 
     padding: 6px 12px; 
@@ -276,6 +323,10 @@ a {
       font-size: 0.8125rem;
     }
   }
+  &--lg {
+    padding: 0.875rem 1.5rem;
+    font-size: 1rem;
+  }
   
   &--full {
     width: 100%;
@@ -283,6 +334,16 @@ a {
 }
 
 /* SweetAlert2 - match BRIMS look & feel */
+@keyframes swal-btn-pulse {
+  0%,
+  100% {
+    transform: translateY(-1px) scale(1);
+  }
+  50% {
+    transform: translateY(-1px) scale(1.02);
+  }
+}
+
 .swal2-popup {
   border-radius: var(--radius-lg);
   background: var(--color-bg-card);
@@ -313,6 +374,9 @@ a {
   font-weight: 500;
   font-size: 0.9375rem;
   box-shadow: none;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease,
+    transform 0.15s ease, box-shadow 0.2s ease;
 }
 
 .swal2-styled:focus {
@@ -326,6 +390,14 @@ a {
 
 .swal2-styled.swal2-confirm:hover {
   background: var(--color-primary-dark);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35);
+  animation: swal-btn-pulse 1.5s ease-in-out infinite;
+}
+
+.swal2-styled.swal2-confirm:active {
+  animation: none;
+  transform: translateY(0) scale(1);
+  box-shadow: 0 1px 4px rgba(37, 99, 235, 0.25);
 }
 
 .swal2-styled.swal2-cancel {
@@ -337,6 +409,87 @@ a {
 .swal2-styled.swal2-cancel:hover {
   background: var(--color-bg-secondary);
   color: var(--color-text);
+  border-color: var(--color-text-muted);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  animation: swal-btn-pulse 1.5s ease-in-out infinite;
+}
+
+.swal2-styled.swal2-cancel:active {
+  animation: none;
+  transform: translateY(0) scale(1);
+  box-shadow: none;
+}
+
+/* Dropdown / select - consistent look across the app (!important so component styles don't hide arrow) */
+$select-arrow-svg: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+
+select,
+select.form-control,
+select.form-control--sm,
+select.filter-select,
+select.role-select,
+select.purok-select,
+select.household-map-filter-group__input {
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  cursor: pointer;
+  background-image: $select-arrow-svg !important;
+  background-repeat: no-repeat !important;
+  background-position: right 12px center !important;
+  background-size: 18px !important;
+  padding-right: 42px !important;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+select,
+select.form-control {
+  min-height: 42px;
+  padding: 10px 42px 10px 14px !important;
+}
+
+select:hover,
+select.form-control:hover,
+select.filter-select:hover,
+select.role-select:hover,
+select.purok-select:hover,
+select.household-map-filter-group__input:hover {
+  border-color: var(--color-primary-light);
+}
+
+select:focus,
+select.form-control:focus,
+select.filter-select:focus,
+select.role-select:focus,
+select.purok-select:focus,
+select.household-map-filter-group__input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+/* Small variant for inline filters */
+select.form-control--sm {
+  min-height: 36px;
+  padding: 6px 34px 6px 10px !important;
+  padding-right: 34px !important;
+  background-position: right 8px center !important;
+  background-size: 16px !important;
+  font-size: 0.875rem;
+}
+
+/* Component-specific selects: keep arrow, slightly smaller padding */
+select.filter-select,
+select.role-select,
+select.purok-select {
+  padding-right: 38px !important;
+  background-position: right 10px center !important;
+  background-size: 16px !important;
+}
+
+select.household-map-filter-group__input {
+  padding-right: 40px !important;
+  background-position: right 10px center !important;
 }
 
 .form-group {
@@ -503,6 +656,7 @@ a {
 }
 
 .page-title {
+  font-family: var(--font-family-title);
   font-size: 1.875rem;
   font-weight: 700;
   margin-bottom: 1.5rem;
@@ -594,15 +748,21 @@ a {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background 0.2s, transform 0.15s ease, box-shadow 0.2s;
+  transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.25s ease, border-color 0.2s ease;
 
   &:hover {
     background: var(--color-bg);
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+    box-shadow: var(--shadow-lg), 0 0 0 2px var(--color-border);
+    transform: scale(1.06);
+    border-color: var(--color-text-muted, rgba(0, 0, 0, 0.2));
+  }
+
+  &:hover .theme-toggle__icon {
+    transform: rotate(12deg);
   }
 
   &:active {
-    transform: scale(0.96);
+    transform: scale(0.97);
   }
 
   @media (max-width: 640px) {
@@ -617,6 +777,7 @@ a {
   width: 24px;
   height: 24px;
   flex-shrink: 0;
+  transition: transform 0.25s ease;
 
   @media (max-width: 640px) {
     width: 22px;
@@ -624,8 +785,8 @@ a {
   }
 }
 
-/* Notification bell - keep position fixed; only blur when sidebar is open in mobile view */
-@media (max-width: 1023px) {
+/* Notification bell - blur when sidebar drawer is open (laptop + mobile) */
+@media (max-width: 1439px) {
   body.sidebar-open .global-notifications {
     transform: none; /* avoid sideways push */
     filter: blur(4px);
@@ -633,10 +794,32 @@ a {
   }
 }
 
+/* On small screens, fully hide the bell while the sidebar drawer is open
+   so it doesn't overlap the slide-in menu. */
 @media (max-width: 640px) {
   body.sidebar-open .global-notifications {
-    transform: none; /* avoid sideways push */
+    transform: none;
+    opacity: 0;
+    pointer-events: none;
   }
+}
+
+/* When SweetAlert2 modal is open (e.g. logout/export confirm), dim + disable notification bell */
+body.swal2-shown .global-notifications {
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+body.swal2-shown .global-notifications__bell,
+body.swal2-shown .global-notifications__bell:hover,
+body.swal2-shown .global-notifications__bell:active,
+body.swal2-shown .global-notifications__bell:focus,
+body.swal2-shown .global-notifications__bell:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow);
+  transform: scale(1);
+  border-color: var(--color-border);
+  background: var(--color-bg-card);
 }
 
 /* Floating action button (add) - lower right, shown on list pages */
@@ -658,11 +841,13 @@ a {
   text-decoration: none;
   box-shadow: var(--shadow-lg);
   cursor: pointer;
-  transition: background 0.2s, transform 0.15s ease, box-shadow 0.2s;
+  transition: background 0.2s ease, transform 0.25s ease, box-shadow 0.25s ease;
 
   &:hover {
     background: var(--color-primary-dark);
-    box-shadow: 0 6px 16px rgba(37, 99, 235, 0.35);
+    transform: scale(1.05);
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.2), 0 8px 24px rgba(37, 99, 235, 0.4);
+    filter: brightness(1.08);
   }
 
   &:active {

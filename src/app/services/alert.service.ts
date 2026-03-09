@@ -11,6 +11,18 @@ export class AlertService {
     });
   }
 
+  /** Success message without OK button; closes automatically after timerMs (default 1000). */
+  successToast(title: string, text?: string, timerMs: number = 1000) {
+    return Swal.fire({
+      icon: 'success',
+      title,
+      text,
+      showConfirmButton: false,
+      timer: timerMs,
+      timerProgressBar: true,
+    });
+  }
+
   error(title: string, text?: string) {
     return Swal.fire({
       icon: 'error',

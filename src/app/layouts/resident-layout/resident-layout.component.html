@@ -17,7 +17,7 @@
   
   <aside class="sidebar" [class.sidebar--open]="isMobileMenuOpen">
     <div class="sidebar-header">
-      <img class="logo" src="/assets/images/FOR-DASHBOARD.png" alt="Logo" />
+      <img class="logo" src="/assets/images/FOR-DASHBOARD.png" alt="Logo" loading="eager" decoding="async" />
       <button 
         class="sidebar-close" 
         (click)="closeMobileMenu()"
@@ -92,7 +92,7 @@
     </main>
   </div>
 
-  @if (showTopRightUi) {
+  @if (showTopRightUi && !isMobileMenuOpen) {
     <header class="top-bar" [class.top-bar--sidebar-open]="isMobileMenuOpen" aria-label="Top bar">
       <h1 class="top-bar__title">Barangay Resident Information System</h1>
       <button
@@ -124,7 +124,7 @@
           @if (auth.profilePicture$ | async; as profilePic) {
             <img [src]="profilePic" alt="" class="profile-menu__avatar" />
           } @else {
-            <img src="/assets/images/default-avatar.png" alt="" class="profile-menu__avatar" />
+            <span class="profile-menu__avatar profile-menu__avatar-placeholder" aria-hidden="true">👤</span>
           }
         </button>
         @if (isProfileMenuOpen) {
@@ -148,13 +148,18 @@
   }
 
   @if (fabLink; as fab) {
-    <a [routerLink]="fab.link" class="fab" [attr.aria-label]="fab.label">
+    <a
+      [routerLink]="fab.link"
+      class="fab"
+      [class.fab--sidebar-open]="isMobileMenuOpen"
+      [attr.aria-label]="fab.label"
+    >
       <span class="fab__icon">+</span>
       <span class="fab__label">{{ fab.label }}</span>
     </a>
   }
 
-  @if (showBackToTop) {
+  @if (showBackToTop && !isMobileMenuOpen) {
     <button
       type="button"
       class="back-to-top"

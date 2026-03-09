@@ -1,0 +1,4 @@
+{
+  "apiBaseUrl": "https://brims-production.up.railway.app",
+  "_hint": "Frontend is on Firebase Hosting; backend runs elsewhere. Deploy backend to Railway/Render (see backend/README.md), then set apiBaseUrl here to that URL (no trailing slash)."
+}

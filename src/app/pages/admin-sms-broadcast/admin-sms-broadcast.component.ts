@@ -30,6 +30,8 @@ export class AdminSmsBroadcastComponent {
   emailAttachmentBase64: string | null = null;
   emailAttachmentName: string | null = null;
   emailAttachmentMimeType: string | null = null;
+  /** Kept for bulk send so we can upload file via FormData instead of base64 in JSON */
+  emailAttachmentFile: File | null = null;
 
   broadcastSmsToAllResidents = false;
   broadcastEmailToAllResidents = false;
@@ -113,16 +115,18 @@ export class AdminSmsBroadcastComponent {
       this.emailAttachmentBase64 = null;
       this.emailAttachmentName = null;
       this.emailAttachmentMimeType = null;
+      this.emailAttachmentFile = null;
       return;
     }
 
+    this.emailAttachmentFile = file;
+    this.emailAttachmentName = file.name;
+    this.emailAttachmentMimeType = file.type || null;
     const reader = new FileReader();
     reader.onload = () => {
       const result = reader.result as string;
       const base64 = result.split(',')[1] || result;
       this.emailAttachmentBase64 = base64;
-      this.emailAttachmentName = file.name;
-      this.emailAttachmentMimeType = file.type || null;
     };
     reader.readAsDataURL(file);
   }
@@ -131,6 +135,7 @@ export class AdminSmsBroadcastComponent {
     this.emailAttachmentBase64 = null;
     this.emailAttachmentName = null;
     this.emailAttachmentMimeType = null;
+    this.emailAttachmentFile = null;
   }
 
   sendSms() {
@@ -231,16 +236,26 @@ export class AdminSmsBroadcastComponent {
         return;
       }
 
-      this.emailService
-        .sendBulkEmail({
-          recipients,
-          subject: trimmedSubject,
-          message: trimmedMessage,
-          attachmentName: this.emailAttachmentName || undefined,
-          attachmentContent: this.emailAttachmentBase64 || undefined,
-          attachmentMimeType: this.emailAttachmentMimeType || undefined,
-        })
-        .subscribe({
+      const bulkPayload = {
+        recipients,
+        subject: trimmedSubject,
+        message: trimmedMessage,
+        attachmentName: this.emailAttachmentName || undefined,
+        attachmentContent: this.emailAttachmentBase64 || undefined,
+        attachmentMimeType: this.emailAttachmentMimeType || undefined,
+      };
+
+      const obs =
+        this.emailAttachmentFile != null
+          ? this.emailService.sendBulkEmailWithAttachment(
+              recipients,
+              trimmedSubject,
+              trimmedMessage,
+              this.emailAttachmentFile
+            )
+          : this.emailService.sendBulkEmail(bulkPayload);
+
+      obs.subscribe({
           next: (res: import('../../services/email.service').BulkEmailResponse) => {
             if (res.success) {
               const successCount = res.results.filter(r => r.success).length;

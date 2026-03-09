@@ -6,7 +6,19 @@
   padding: 24px;
   background: url('/assets/images/BG.jpg') no-repeat center center fixed;
   background-size: cover;
-  
+  position: relative;
+  isolation: isolate;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(135deg, rgba(37, 99, 235, 0.18) 0%, transparent 45%),
+      rgba(0, 0, 0, 0.28);
+    z-index: -1;
+  }
+
   @media (max-width: 640px) {
     padding: 16px;
   }
@@ -56,6 +68,7 @@
 }
 
 .error-code {
+  font-family: var(--font-family-title);
   font-size: 6rem;
   font-weight: 700;
   color: var(--color-primary);
@@ -68,6 +81,7 @@
 }
 
 .error-title {
+  font-family: var(--font-family-title);
   font-size: 1.75rem;
   font-weight: 600;
   color: var(--color-text);

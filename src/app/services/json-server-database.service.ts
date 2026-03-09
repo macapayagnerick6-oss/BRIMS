@@ -193,10 +193,10 @@ export class JsonServerDatabaseService implements IDatabaseService {
     seniorCitizens: number;
   }> {
     return this.getResidents().pipe(
-      switchMap((residents) =>
+      switchMap((residents: Resident[]) =>
         this.getHouseholds().pipe(
-          map((households) => {
-            const seniorCitizens = residents.filter((r) => r.age >= 60).length;
+          map((households: Household[]) => {
+            const seniorCitizens = residents.filter((r: Resident) => r.age >= 60).length;
             return {
               totalResidents: residents.length,
               totalHouseholds: households.length,
