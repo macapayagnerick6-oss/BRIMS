@@ -176,10 +176,10 @@ The backend will run on `http://localhost:4000` by default. Make sure the Angula
 - **@zxing/ngx-scanner** (v21) – QR code scanning using camera
 - **Chart.js + ng2-charts** – Charts and data visualization (reports, dashboard)
 - **Leaflet** – Maps for household/geographic views
+- **Firebase (AngularFire) + Firestore** – Primary data store used by the app
 - **Node.js + Express** – Lightweight notification backend (`backend`)
 - **Twilio** – SMS provider
 - **Nodemailer + SMTP** – Email provider
-- **LocalStorage / demo data** – Replace with real database or Firebase (see [FIREBASE_MIGRATION.md](FIREBASE_MIGRATION.md)) for production
 ---
 
 ## What's New
@@ -219,10 +219,10 @@ src/app/
 │   └── (each as .ts, .html, .scss)
 ├── services/
 │   ├── auth.service.ts                     # Login / current user
-│   ├── data.service.ts                     # Core in‑memory + localStorage data layer
+│   ├── data.service.ts                     # Core data layer (uses injected database service)
 │   ├── database.interface.ts               # IDatabaseService abstraction
-│   ├── local-storage-database.service.ts   # Local storage implementation
-│   ├── firebase-database.service.ts        # Firebase-ready implementation (optional)
+│   ├── local-storage-database.service.ts   # Local storage implementation (legacy/demo)
+│   ├── firebase-database.service.ts        # Firestore implementation (active)
 │   ├── json-server-database.service.ts     # JSON Server integration (optional/demo)
 │   ├── audit-log.service.ts                # Audit trail for key actions
 │   ├── notification.service.ts             # In‑app notifications
@@ -253,33 +253,39 @@ backend/
 
 ## Database & Firebase
 
-The app currently uses **localStorage** for data. A migration path to **Firebase** is documented in [FIREBASE_MIGRATION.md](FIREBASE_MIGRATION.md). The data layer is abstracted via `IDatabaseService`, so you can swap in Firebase (or another backend) without changing the rest of the app.
+BRIMS is **Firebase integrated** and uses **Firestore** as its primary datastore.
+
+- **Firebase wiring**: `src/app/app.config.ts` initializes Firebase (`environment.firebase`) and provides Firestore.
+- **Active database implementation**: the app binds `DATABASE_SERVICE` to `FirebaseDatabaseService` (via `IDatabaseService`), so reads/writes go to Firestore.
+- **Swappable data layer**: the `IDatabaseService` abstraction remains, so you can swap implementations (e.g. JSON Server) if needed.
 
 ---
 
 ## Environment Configuration
 
-Create an `environment.ts` file in `src/environments/` to configure:
+Environment files already exist under `src/environments/`:
 
-- Backend API URL (default: `http://localhost:4000`)
-- Production vs development settings
-- Feature flags and other app-specific configurations
+- **`environment.ts`**: local/dev defaults (includes `apiBaseUrl` and `firebase` config)
+- **`environment.prod.ts`**: production defaults (set `apiBaseUrl` to your deployed backend URL; keep your Firebase config accurate)
 
-Example:
-```typescript
-export const environment = {
-  production: false,
-  apiUrl: 'http://localhost:4000',
-  // Add other configuration as needed
-};
+The frontend uses:
+
+- **`environment.firebase`** for Firebase initialization (AngularFire)
+- **`environment.apiBaseUrl`** for the optional SMS/email backend
+
+### Runtime API base URL override (optional)
+If you deploy the Angular app separately from the backend, you can override the backend URL at runtime via `src/assets/config.json`:
+
+```json
+{ "apiBaseUrl": "https://your-backend.example.com" }
 ```
 
 ---
 
 ## Notes & Next Steps
 
-- For production, integrate a real **database** and **auth backend** (e.g. via [FIREBASE_MIGRATION.md](FIREBASE_MIGRATION.md)) in place of localStorage/demo data.
+- For production, make sure your **Firebase project** (Firestore rules, indexes, and allowed origins) is correctly configured for your deployment.
 - Secure the backend APIs with proper **authentication** and **authorization**.
-- Configure proper **environment files** (`environment.ts`) to point to your production backend URLs and providers.
+- Configure proper **environment files** (`environment.prod.ts`) or `assets/config.json` to point to your production backend URL (SMS/email).
 - Implement proper password hashing for user authentication (currently accepts any password for demo purposes).
 - Add data export/import functionality for backups and migrations.

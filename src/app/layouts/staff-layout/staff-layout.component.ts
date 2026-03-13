@@ -31,9 +31,12 @@ export class StaffLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
     private alert: AlertService,
   ) {}
 
-  /** Hide mobile hamburger on QR scanner + add resident/household forms */
+  /** Hide mobile hamburger on QR scanner, add forms, household map, resident profile, and request details */
   get showMobileMenuToggle(): boolean {
     const url = this.router.url;
+    if (url.startsWith('/staff/households/map')) return false;
+    if (/^\/staff\/residents\/[^/]+$/.test(url)) return false; // resident profile
+    if (url.startsWith('/staff/requests/') && url !== '/staff/requests') return false;
     if (url.includes('/qr-scanner')) return false;
     if (url.includes('/residents/add')) return false;
     if (url.includes('/households/add')) return false;

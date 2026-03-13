@@ -171,23 +171,53 @@ export class ResidentProfileComponent implements OnInit, OnDestroy {
 
   /** Resolve residents list URL so "Back to Residents" works from both admin and staff. */
   get residentsListUrl(): string {
-    const base = this.router.url.startsWith('/admin') ? '/admin' : '/staff';
+    const base = this.getBaseRoute();
     return `${base}/residents`;
   }
 
   /** Get the request detail URL for a given request ID, works from both admin and staff. */
   getRequestDetailUrl(requestId: string): string {
-    const base = this.router.url.startsWith('/admin') ? '/admin' : '/staff';
+    const base = this.getBaseRoute();
     return `${base}/requests/${requestId}`;
   }
 
   goToCreatedRequest(): void {
-    if (this.createdRequestId) {
-      this.closeGenerateCertificate();
-      const isAdminPath = this.router.url.startsWith('/admin');
-      const base = isAdminPath ? '/admin' : '/staff';
-      this.router.navigate([base, 'requests', this.createdRequestId]);
+    // Prefer the freshly created request ID if available
+    let targetId = this.createdRequestId ?? undefined;
+
+    // Fallback: look up the latest request for this resident
+    if (!targetId && this.resident?.residentId) {
+      const requestsForResident = this.data.getRequestsByResidentId(this.resident.residentId);
+      if (requestsForResident.length > 0) {
+        const sorted = [...requestsForResident].sort((a, b) => {
+          const aNum = parseInt(a.id, 10);
+          const bNum = parseInt(b.id, 10);
+          if (Number.isNaN(aNum) || Number.isNaN(bNum)) {
+            return a.id.localeCompare(b.id);
+          }
+          return aNum - bNum;
+        });
+        targetId = sorted[sorted.length - 1].id;
+      }
     }
+
+    // If we still don't have an ID, don't attempt navigation
+    if (!targetId) return;
+
+    this.closeGenerateCertificate();
+    const base = this.getBaseRoute();
+    const targetUrl = `${base}/requests/${targetId}`;
+    this.router.navigateByUrl(targetUrl);
+  }
+
+  /**
+   * Detect the correct base route segment based on the current URL.
+   * Supports admin, staff, and resident layouts.
+   */
+  private getBaseRoute(): '/admin' | '/staff' | '/resident' {
+    if (this.router.url.startsWith('/admin')) return '/admin';
+    if (this.router.url.startsWith('/resident')) return '/resident';
+    return '/staff';
   }
 
   get residentRequests(): CertificateRequest[] {

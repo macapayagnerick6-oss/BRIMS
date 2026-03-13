@@ -129,10 +129,6 @@
         </button>
         @if (isProfileMenuOpen) {
           <div class="profile-menu__dropdown">
-            <a [routerLink]="['/resident/profile']" class="profile-menu__item" (click)="closeProfileMenu()">
-              <span class="profile-menu__item-icon">👤</span>
-              My Profile
-            </a>
             <a [routerLink]="['/resident/settings']" class="profile-menu__item" (click)="closeProfileMenu()">
               <span class="profile-menu__item-icon">⚙</span>
               Settings

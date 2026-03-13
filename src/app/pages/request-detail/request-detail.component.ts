@@ -121,6 +121,25 @@ export class RequestDetailComponent implements OnInit {
     const ref = this.certificateRef?.nativeElement;
     if (!ref) return;
     const fileName = `certificate-${this.request?.id || 'barangay'}`;
+    if (format === 'pdf') {
+      this.certificateGenerator.exportPdfText(
+        {
+          requestType: this.request?.type,
+          purpose: this.request?.purpose,
+          dateIssued: this.request?.date,
+          controlNo: this.request?.id,
+          person: {
+            name: this.requester?.name,
+            civilStatus: this.requester?.civilStatus,
+            purok: this.requester?.purok,
+            address: this.requester?.address,
+          },
+        },
+        fileName,
+      );
+      return;
+    }
+
     await this.certificateGenerator.export(ref, fileName, format);
   }
 }

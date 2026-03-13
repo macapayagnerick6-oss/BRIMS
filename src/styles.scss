@@ -420,6 +420,13 @@ a {
   box-shadow: none;
 }
 
+/* Blur the entire app background whenever a SweetAlert2 modal is open */
+body.swal2-shown > *:not(.swal2-container) {
+  filter: blur(4px);
+  -webkit-filter: blur(4px);
+  transition: filter 0.2s ease, -webkit-filter 0.2s ease;
+}
+
 /* Dropdown / select - consistent look across the app (!important so component styles don't hide arrow) */
 $select-arrow-svg: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
 
@@ -804,22 +811,39 @@ select.household-map-filter-group__input {
   }
 }
 
-/* When SweetAlert2 modal is open (e.g. logout/export confirm), dim + disable notification bell */
-body.swal2-shown .global-notifications {
+/* When SweetAlert2 modal is open (e.g. logout/export confirm), dim + disable top-right controls */
+body.swal2-shown .global-notifications,
+body.swal2-shown .top-bar__icon-button {
   opacity: 0.4;
   pointer-events: none;
 }
 
+/* Keep icon glyphs consistent while dimmed */
+body.swal2-shown .global-notifications__bell,
+body.swal2-shown .top-bar__icon-button {
+  color: var(--color-text-muted) !important;
+}
+
+/* Ensure hover / focus states don't pop while SweetAlert is visible */
 body.swal2-shown .global-notifications__bell,
 body.swal2-shown .global-notifications__bell:hover,
 body.swal2-shown .global-notifications__bell:active,
 body.swal2-shown .global-notifications__bell:focus,
-body.swal2-shown .global-notifications__bell:focus-visible {
+body.swal2-shown .global-notifications__bell:focus-visible,
+body.swal2-shown .top-bar__icon-button:hover,
+body.swal2-shown .top-bar__icon-button:active,
+body.swal2-shown .top-bar__icon-button:focus,
+body.swal2-shown .top-bar__icon-button:focus-visible {
   outline: none;
   box-shadow: var(--shadow);
   transform: scale(1);
   border-color: var(--color-border);
   background: var(--color-bg-card);
+}
+
+/* Slightly fade the bell glyph itself when SweetAlert is visible so its fill matches the dimmed UI */
+body.swal2-shown .global-notifications__icon {
+  opacity: 0.6;
 }
 
 /* Floating action button (add) - lower right, shown on list pages */

@@ -21,7 +21,19 @@ import { NotificationTypeLabelPipe } from './services/notification-type-label.pi
           [attr.aria-label]="'Notifications'"
           [attr.aria-expanded]="showNotifications"
         >
-          <span class="global-notifications__icon" aria-hidden="true">🔔</span>
+          <svg
+            class="global-notifications__icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M12 3a5 5 0 0 0-5 5v2.5c0 .7-.2 1.4-.6 2l-.8 1.2A1 1 0 0 0 6.4 15h11.2a1 1 0 0 0 .8-1.3l-.8-1.2c-.4-.6-.6-1.3-.6-2V8a5 5 0 0 0-5-5Z" />
+            <path d="M10 18a2 2 0 0 0 4 0" />
+          </svg>
           @if (unreadCount > 0) {
             <span class="global-notifications__badge">{{ unreadCount > 9 ? '9+' : unreadCount }}</span>
           }
@@ -166,11 +178,20 @@ import { NotificationTypeLabelPipe } from './services/notification-type-label.pi
         border-color: var(--color-border);
         background: var(--color-bg-card);
       }
+      
+      :host-context(body.swal2-shown) .global-notifications__bell {
+        color: var(--color-text-muted) !important;
+      }
 
       .global-notifications__icon {
-        font-size: 1.25rem;
-        line-height: 1;
-        filter: var(--notification-icon-filter);
+        width: 22px;
+        height: 22px;
+        flex-shrink: 0;
+        
+        @media (max-width: 640px) {
+          width: 20px;
+          height: 20px;
+        }
       }
 
       .global-notifications__badge {

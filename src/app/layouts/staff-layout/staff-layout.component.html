@@ -138,7 +138,7 @@
       <h1 class="top-bar__title">Barangay Resident Information System</h1>
       <button
         type="button"
-        class="theme-toggle"
+        class="theme-toggle top-bar__icon-button"
         [attr.aria-label]="theme.isDark() ? 'Switch to light mode' : 'Switch to dark mode'"
         (click)="theme.toggleTheme()"
       >
@@ -153,11 +153,11 @@
           </svg>
         }
       </button>
-      <div class="top-bar__bell-slot" aria-hidden="true"></div>
+      <div class="top-bar__bell-slot top-bar__icon-button" aria-hidden="true"></div>
       <div class="profile-menu" #profileMenu>
         <button
           type="button"
-          class="profile-menu__trigger"
+          class="profile-menu__trigger top-bar__icon-button"
           [attr.aria-label]="'Profile menu'"
           [attr.aria-expanded]="isProfileMenuOpen"
           (click)="toggleProfileMenu()"
@@ -170,10 +170,6 @@
         </button>
         @if (isProfileMenuOpen) {
           <div class="profile-menu__dropdown">
-            <a [routerLink]="['/staff/profile']" class="profile-menu__item" (click)="closeProfileMenu()">
-              <span class="profile-menu__item-icon">👤</span>
-              My Profile
-            </a>
             <a [routerLink]="['/staff/settings']" class="profile-menu__item" (click)="closeProfileMenu()">
               <span class="profile-menu__item-icon">⚙</span>
               Settings
